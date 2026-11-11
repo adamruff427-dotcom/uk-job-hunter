@@ -1,0 +1,30 @@
+{
+  "minimum_basic_salary_gbp": null,
+  "preferred_basic_salary_gbp": null,
+  "remote_first": true,
+  "home_base": "",
+  "nearby_places": [],
+  "hybrid_review_places": [],
+  "excluded_commute_places": [],
+  "preferred_sectors": [],
+  "target_roles": [
+    "operations manager",
+    "risk manager",
+    "change manager",
+    "compliance manager",
+    "project manager",
+    "programme manager",
+    "security manager"
+  ],
+  "related_terms": [
+    "operations",
+    "risk",
+    "change",
+    "compliance",
+    "governance",
+    "project",
+    "programme",
+    "security"
+  ],
+  "excluded_title_terms": []
+}

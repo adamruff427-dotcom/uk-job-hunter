@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="UK Job Hunter: find credible UK jobs, understand the match, and keep your applications organised.">
+  <title>UK Job Hunter — useful jobs, less noise</title>
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap nav">
+      <a href="/" class="brand" aria-label="UK Job Hunter home"><span class="brand-icon">JH</span> <span>UK Job Hunter</span></a>
+      <div class="nav-right"><span class="local-pill"><span class="local-dot"></span> Private on this device</span><span class="version">Product preview · v0.5.0</span></div>
+    </div>
+  </header>
+  <main class="wrap">
+    <section class="hero">
+      <div class="eyebrow">YOUR JOB SEARCH, WITHOUT THE NOISE</div>
+      <h1>Find work that's <em>actually worth applying for.</em></h1>
+      <p>Discover vacancies across industries, understand why jobs match your experience, and manage your shortlist. Your preferences stay on your computer.</p>
+    </section>
+    <nav class="tabs" aria-label="Main sections">
+      <button class="tab active" type="button" data-tab="discover">Discover jobs <span id="discoveryCount" class="tab-count"></span></button>
+      <button class="tab" type="button" data-tab="tracker">My applications <span id="savedCount" class="tab-count">0</span></button>
+      <button class="tab" type="button" data-tab="settings">My preferences</button>
+    </nav>
+    <section id="notice" role="status" aria-live="polite" hidden></section>
+    <section id="discover" class="panel" aria-label="Discover jobs">
+      <div class="action-bar">
+        <div><h2>Find your next role</h2><p class="muted">Discover across configured company careers pages and optional licensed job feeds. Always verify the vacancy on its source.</p></div>
+        <div class="actions"><button id="demoBtn" class="btn ghost" type="button">Preview example jobs</button></div>
+      </div>
+      <div class="search-modes" role="group" aria-label="Choose your search scope">
+        <button id="searchAllBtn" class="search-mode selected" type="button" aria-pressed="true">
+          <strong>Search everything</strong>
+          <span>All available jobs from every connected source, in every industry — no personal match restrictions.</span>
+        </button>
+        <button id="searchMatchesBtn" class="search-mode" type="button" aria-pressed="false">
+          <strong>Search for me</strong>
+          <span>Use the same wide search, but show only jobs that merit a closer look based on your preferences.</span>
+        </button>
+      </div>
+      <p class="search-scope-note" id="scopeDescription">Searching everything means all configured sources, not every vacancy advertised in the UK. You can narrow results afterwards by industry or keyword.</p>
+      <div id="sourceStatus" class="source-status">Scan enabled sources to browse UK jobs by industry. Coverage depends on connected sources.</div>
+      <details id="coverageDetails" class="coverage-details" hidden><summary>Source coverage and errors</summary><ul id="coverageHealth"></ul></details>
+      <div class="stats" id="stats" hidden>
+        <div class="stat"><span class="stat-number" id="countShortlist">0</span><span class="stat-label">Strong first matches</span></div>
+        <div class="stat"><span class="stat-number" id="countReview">0</span><span class="stat-label">Worth reviewing</span></div>
+        <div class="stat"><span class="stat-number" id="countSources">0/0</span><span class="stat-label">Sources reached</span></div>
+      </div>
+      <section class="industry-section" id="industrySection" aria-label="Browse jobs by industry" hidden>
+        <div class="industry-head">
+          <div><h3>Explore by industry</h3><p class="muted">Swipe or scroll to browse sectors. Counts reflect this scan, not the whole UK market.</p></div>
+          <div class="industry-arrows" aria-label="Scroll industries"><button id="industryPrev" class="btn ghost" type="button" aria-label="Scroll industries left">‹</button><button id="industryNext" class="btn ghost" type="button" aria-label="Scroll industries right">›</button></div>
+        </div>
+        <div id="industryRail" class="industry-rail" role="group" aria-label="Select industry"></div>
+        <p class="industry-summary" id="industrySummary" aria-live="polite"></p>
+      </section>
+      <div class="filters" id="filters" hidden>
+        <label class="search-box"><span class="sr-only">Search within all returned jobs</span><input id="searchInput" type="search" placeholder="Search any job title, description, company or location..."></label>
+        <div class="filter-buttons" role="group" aria-label="Show jobs by fit">
+          <button class="filter" type="button" data-filter="relevant">Relevant to me</button>
+          <button class="filter" type="button" data-filter="shortlist">Strong matches</button>
+          <button class="filter" type="button" data-filter="review">Review</button>
+          <button class="filter active" type="button" data-filter="all">All vacancies</button>
+        </div>
+      </div>
+      <p id="resultsSummary" class="results-summary" hidden aria-live="polite"></p>
+      <div id="jobList" class="job-list"><div class="empty"><div class="empty-icon">⌕</div><h3>Ready when you are</h3><p>Start with Search everything to see all available vacancies, then browse by industry or set preferences for more targeted matching. You can also preview the interface using fictional example jobs.</p><button class="btn ghost" id="goPreferences" type="button">Set my preferences</button></div></div>
+    </section>
+    <section id="tracker" class="panel" aria-label="My applications" hidden>
+      <div class="action-bar"><div><h2>My applications</h2><p class="muted">Keep track of the jobs you want and what happened next.</p></div><a href="/api/export" class="btn ghost" id="exportBtn">Export my tracker</a></div>
+      <div class="privacy-note">Your saved jobs and notes are stored in a local file on this computer. The app does not send applications.</div>
+      <div id="trackerList" class="job-list"></div>
+    </section>
+    <section id="settings" class="panel" aria-label="My preferences" hidden>
+      <div class="action-bar"><div><h2>Your search preferences</h2><p class="muted">Tell the tool what you're looking for. These settings are never sent to employers or uploaded.</p></div></div>
+      <form id="preferencesForm" class="settings-form">
+        <div class="field-span"><label for="roles">Roles you'd consider</label><p>Use job titles you could credibly do. Separate with commas.</p><textarea id="roles" rows="3" placeholder="Operations Manager, Risk Manager, Change Lead"></textarea></div>
+        <div class="field-span"><label for="related">Related terms</label><p>Broader phrases to find adjacent roles for manual review.</p><input id="related" type="text" placeholder="operations, governance, change, compliance"></div>
+        <div class="field"><label for="minSalary">Minimum annual basic salary (£)</label><input id="minSalary" type="number" min="0" max="1000000" step="1000" placeholder="Leave empty if flexible"></div>
+        <div class="field"><label for="preferredSalary">Preferred salary (£)</label><input id="preferredSalary" type="number" min="0" max="1000000" step="1000" placeholder="Optional"></div>
+        <div class="field"><label for="homeBase">Home city or area</label><input id="homeBase" type="text" maxlength="120" placeholder="e.g. Bristol"></div>
+        <div class="field"><label for="nearby">Places you'd commute to</label><input id="nearby" type="text" placeholder="Bath, Bristol"></div>
+        <div class="field"><label for="hybrid">Places requiring a commute check</label><input id="hybrid" type="text" placeholder="Cardiff, Exeter"></div>
+        <div class="field"><label for="excluded">Places you don't want to commute to</label><input id="excluded" type="text" placeholder="London, Birmingham"></div>
+        <div class="field-span inline-check"><label><input type="checkbox" id="remoteFirst" checked> Prefer remote work where possible</label></div>
+        <div class="field-span"><label for="excludedRoles">Job titles to exclude</label><input id="excludedRoles" type="text" placeholder="Graduate, Software Engineer"></div>
+        <div class="field-span settings-actions"><button id="saveSettings" type="submit" class="btn primary">Save my preferences</button><span class="muted">Changing preferences clears the previous scan and updates future matching.</span></div>
+      </form>
+      <section class="source-manager">
+        <h3>Employer sources</h3>
+        <p class="muted">Start with the included employers, then add boards on Greenhouse, Lever, Ashby or SmartRecruiters, or a public company careers website with structured job data. Your source list is stored privately on this computer.</p>
+        <div id="sourceList" class="source-list"></div>
+        <form id="sourceForm" class="source-form">
+          <label>Employer name<input type="text" id="newSourceName" maxlength="100" placeholder="e.g. Example Company" required></label>
+          <label>Public careers URL<input type="url" id="newSourceUrl" placeholder="https://jobs.ashbyhq.com/company" required></label>
+          <label>Employer industry (used to group all of its vacancies)
+            <select id="newSourceSector">
+              <option value="unspecified">Not sure / unclassified</option>
+              <option value="financial-services">Financial services</option>
+              <option value="technology">Technology &amp; digital</option>
+              <option value="defence-security">Defence &amp; security</option>
+              <option value="energy-utilities">Energy &amp; utilities</option>
+              <option value="healthcare">Healthcare &amp; life sciences</option>
+              <option value="public-sector">Public sector</option>
+              <option value="education">Education &amp; research</option>
+              <option value="professional-services">Professional services</option>
+              <option value="engineering-manufacturing">Engineering &amp; manufacturing</option>
+              <option value="transport-logistics">Transport &amp; logistics</option>
+              <option value="construction-property">Construction &amp; property</option>
+              <option value="retail-consumer">Retail &amp; consumer</option>
+              <option value="hospitality-leisure">Hospitality &amp; leisure</option>
+              <option value="charities">Charities &amp; not-for-profit</option>
+            </select>
+          </label>
+          <label>Job page path (only for ordinary company websites)<input type="text" id="newJobPathPrefix" placeholder="/careers/jobs/"></label>
+          <button class="btn ghost" type="submit">Add employer</button>
+        </form>
+        <p class="muted">Ordinary company websites must publish JobPosting structured data, permit access in robots.txt, and expose same-site vacancy URLs matching the path above. No logins or access-control bypass. This is a local preview, not a hosted crawler.</p>
+      </section>
+    </section>
+  </main>
+  <footer class="footer wrap"><span>UK Job Hunter · Open source · Built for jobseekers</span><span>Local preview · No accounts · No automated applications</span></footer>
+</body>
+</html>

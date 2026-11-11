@@ -1,0 +1,21 @@
+# Never publish personal profiles, CVs, tracking records or credentials.
+local_config/
+config/search_profile.json
+private/
+documents/
+reports/
+uk_job_hunter_reports/
+job_search_tracker.csv
+.env
+.env.*
+*.pdf
+*.docx
+*.xlsx
+*.csv
+*.tex
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+.DS_Store

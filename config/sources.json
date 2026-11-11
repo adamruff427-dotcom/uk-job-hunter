@@ -1,0 +1,286 @@
+{
+  "sources": [
+    {
+      "name": "Monzo",
+      "provider": "greenhouse",
+      "board": "monzo",
+      "url": "https://job-boards.greenhouse.io/monzo",
+      "sector": "banking"
+    },
+    {
+      "name": "Griffin",
+      "provider": "ashby",
+      "board": "griffin",
+      "url": "https://jobs.ashbyhq.com/griffin",
+      "sector": "banking"
+    },
+    {
+      "name": "Octopus Energy",
+      "provider": "lever",
+      "board": "octoenergy",
+      "url": "https://jobs.lever.co/octoenergy",
+      "sector": "energy"
+    },
+    {
+      "name": "Anduril Industries",
+      "provider": "greenhouse",
+      "board": "andurilindustries",
+      "url": "https://job-boards.greenhouse.io/andurilindustries",
+      "sector": "defence technology"
+    },
+    {
+      "name": "Wise",
+      "provider": "smartrecruiters",
+      "board": "Wise",
+      "url": "https://careers.smartrecruiters.com/Wise",
+      "sector": "financial technology",
+      "max_details": 25
+    },
+    {
+      "name": "Turner & Townsend",
+      "provider": "smartrecruiters",
+      "board": "TurnerTownsend",
+      "url": "https://careers.smartrecruiters.com/TurnerTownsend",
+      "sector": "consultancy",
+      "max_details": 25
+    },
+    {
+      "name": "Tide",
+      "provider": "greenhouse",
+      "board": "tide",
+      "url": "https://job-boards.greenhouse.io/tide",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Zopa",
+      "provider": "lever",
+      "board": "zopa",
+      "url": "https://jobs.lever.co/zopa",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Tandem Bank",
+      "provider": "greenhouse",
+      "board": "tandemmoneylimited",
+      "url": "https://job-boards.greenhouse.io/tandemmoneylimited",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Healios",
+      "provider": "greenhouse",
+      "board": "healios",
+      "url": "https://job-boards.greenhouse.io/healios",
+      "sector": "healthcare"
+    },
+    {
+      "name": "Skin Analytics",
+      "provider": "ashby",
+      "board": "skin-analytics",
+      "url": "https://jobs.ashbyhq.com/skin-analytics",
+      "sector": "healthcare"
+    },
+    {
+      "name": "Kaluza",
+      "provider": "ashby",
+      "board": "kaluza",
+      "url": "https://jobs.ashbyhq.com/kaluza",
+      "sector": "energy-utilities"
+    },
+    {
+      "name": "Babyzone",
+      "provider": "greenhouse",
+      "board": "babyzone",
+      "url": "https://job-boards.greenhouse.io/babyzone",
+      "sector": "charities"
+    },
+    {
+      "name": "Lookers",
+      "provider": "greenhouse",
+      "board": "lookers",
+      "url": "https://job-boards.greenhouse.io/lookers",
+      "sector": "retail-consumer"
+    },
+    {
+      "name": "Plentific",
+      "provider": "ashby",
+      "board": "plentific",
+      "url": "https://jobs.ashbyhq.com/plentific",
+      "sector": "construction-property"
+    },
+    {
+      "name": "loveholidays",
+      "provider": "ashby",
+      "board": "loveholidays",
+      "url": "https://jobs.ashbyhq.com/loveholidays",
+      "sector": "hospitality-leisure"
+    },
+    {
+      "name": "THG Ingenuity",
+      "provider": "greenhouse",
+      "board": "thgingenuity",
+      "url": "https://job-boards.greenhouse.io/thgingenuity",
+      "sector": "technology"
+    },
+    {
+      "name": "WHOOP",
+      "provider": "ashby",
+      "board": "whoop",
+      "url": "https://jobs.ashbyhq.com/whoop",
+      "sector": "retail-consumer"
+    },
+    {
+      "name": "Duffel",
+      "provider": "ashby",
+      "board": "duffel",
+      "url": "https://jobs.ashbyhq.com/duffel",
+      "sector": "transport-logistics"
+    },
+    {
+      "name": "Super Payments",
+      "provider": "greenhouse",
+      "board": "superpayments",
+      "url": "https://job-boards.greenhouse.io/superpayments",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Levels Technologies",
+      "provider": "ashby",
+      "board": "levels",
+      "url": "https://jobs.ashbyhq.com/levels",
+      "sector": "construction-property"
+    },
+    {
+      "name": "Adaptyv",
+      "provider": "ashby",
+      "board": "adaptyv",
+      "url": "https://jobs.ashbyhq.com/adaptyv",
+      "sector": "healthcare"
+    },
+    {
+      "name": "Trainline",
+      "provider": "ashby",
+      "board": "trainline",
+      "url": "https://jobs.ashbyhq.com/trainline",
+      "sector": "transport-logistics"
+    },
+    {
+      "name": "Deliveroo",
+      "provider": "greenhouse",
+      "board": "deliveroo",
+      "url": "https://job-boards.greenhouse.io/deliveroo",
+      "sector": "transport-logistics"
+    },
+    {
+      "name": "Peregrine",
+      "provider": "greenhouse",
+      "board": "peregrine",
+      "url": "https://job-boards.greenhouse.io/peregrine",
+      "sector": "professional-services"
+    },
+    {
+      "name": "Lendable",
+      "provider": "ashby",
+      "board": "lendable",
+      "url": "https://jobs.ashbyhq.com/lendable",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Thought Machine",
+      "provider": "ashby",
+      "board": "thought-machine",
+      "url": "https://jobs.ashbyhq.com/thought-machine",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Elliptic",
+      "provider": "ashby",
+      "board": "elliptic",
+      "url": "https://jobs.ashbyhq.com/elliptic",
+      "sector": "financial-services"
+    },
+    {
+      "name": "LemFi",
+      "provider": "ashby",
+      "board": "lemfi",
+      "url": "https://jobs.ashbyhq.com/lemfi",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Airwallex",
+      "provider": "ashby",
+      "board": "airwallex",
+      "url": "https://jobs.ashbyhq.com/airwallex",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Ramp",
+      "provider": "ashby",
+      "board": "ramp",
+      "url": "https://jobs.ashbyhq.com/ramp",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Bjak",
+      "provider": "ashby",
+      "board": "bjakcareer",
+      "url": "https://jobs.ashbyhq.com/bjakcareer",
+      "sector": "financial-services"
+    },
+    {
+      "name": "Octopus Legacy",
+      "provider": "greenhouse",
+      "board": "octopuslegacy",
+      "url": "https://job-boards.greenhouse.io/octopuslegacy",
+      "sector": "professional-services"
+    },
+    {
+      "name": "tem",
+      "provider": "ashby",
+      "board": "tem",
+      "url": "https://jobs.ashbyhq.com/tem",
+      "sector": "energy-utilities"
+    },
+    {
+      "name": "Cambridge Consultants",
+      "provider": "greenhouse",
+      "board": "cambridgeconsultantslimited",
+      "url": "https://job-boards.greenhouse.io/cambridgeconsultantslimited",
+      "sector": "professional-services"
+    },
+    {
+      "name": "Ogilvy UK",
+      "provider": "greenhouse",
+      "board": "ogilvyuk",
+      "url": "https://job-boards.greenhouse.io/ogilvyuk",
+      "sector": "professional-services"
+    },
+    {
+      "name": "Hanover",
+      "provider": "greenhouse",
+      "board": "hanover",
+      "url": "https://job-boards.greenhouse.io/hanover",
+      "sector": "professional-services"
+    },
+    {
+      "name": "Nucleus Global",
+      "provider": "greenhouse",
+      "board": "nucleus",
+      "url": "https://job-boards.greenhouse.io/nucleus",
+      "sector": "healthcare"
+    },
+    {
+      "name": "Resolve to Save Lives",
+      "provider": "greenhouse",
+      "board": "resolvetosavelives",
+      "url": "https://job-boards.greenhouse.io/resolvetosavelives",
+      "sector": "charities"
+    },
+    {
+      "name": "ClearView Healthcare Partners",
+      "provider": "greenhouse",
+      "board": "clearviewhealthcarepartners",
+      "url": "https://job-boards.greenhouse.io/clearviewhealthcarepartners",
+      "sector": "professional-services"
+    }
+  ]
+}

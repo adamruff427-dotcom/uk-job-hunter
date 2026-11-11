@@ -1,0 +1,38 @@
+{
+  "note": "OPTIONAL wide UK search APIs. Do not commit credentials. Copy selected entries to local_config/sources.json (merge with defaults). Reed uses REED_API_KEY; Adzuna uses ADZUNA_APP_ID and ADZUNA_APP_KEY. Review commercial reuse terms. Blank query requests broad recent listings; searches are capped for safe API usage.",
+  "sources": [
+    {
+      "name": "Reed UK (optional credentialled)",
+      "provider": "reed",
+      "sector": "multi-sector",
+      "queries": [
+        ""
+      ],
+      "max_pages": 2,
+      "results_per_page": 100,
+      "enabled": false
+    },
+    {
+      "name": "Adzuna UK (optional licensed)",
+      "provider": "adzuna",
+      "sector": "multi-sector",
+      "queries": [
+        ""
+      ],
+      "max_pages": 2,
+      "results_per_page": 50,
+      "enabled": false
+    },
+    {
+      "name": "Careers Site Example",
+      "provider": "website",
+      "url": "https://careers.example.org/careers",
+      "job_path_prefixes": [
+        "/careers/jobs/"
+      ],
+      "max_details": 10,
+      "sector": "unspecified",
+      "enabled": false
+    }
+  ]
+}
