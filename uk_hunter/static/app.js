@@ -44,6 +44,8 @@ function jobCard(job) {
   appendMeta(meta,job.location || 'Location not stated');
   if (job.workplace_type && job.workplace_type !== 'unknown') appendMeta(meta, job.workplace_type);
   appendMeta(meta, salary(job));
+  appendMeta(meta, job.uk_eligibility === 'confirmed_uk' ? 'UK eligibility explicit' : 'UK eligibility needs checking');
+  if (job.last_seen) appendMeta(meta, `Last seen ${new Date(job.last_seen).toLocaleDateString('en-GB')} · ${job.scan_status}`);
   if (job.industry) {
     const sector = (state.scan?.industries || []).find(item => item.id === job.industry);
     appendMeta(meta, sector?.label || 'Unclassified');
@@ -72,6 +74,13 @@ function jobCard(job) {
   });
   if (job.source === 'demo') { save.disabled = true; save.textContent = 'Example only'; }
   buttons.append(save);card.append(buttons);
+  const references = job.source_references || [{source:job.source,url:job.url}];
+  if (references.some(r=>r.source === 'adzuna')) {
+    const credit=el('a','adzuna-credit','Adzuna');credit.href='https://www.adzuna.co.uk';credit.target='_blank';credit.rel='noopener noreferrer';card.append(credit);
+  }
+  if (references.length > 1) {
+    const provenance=el('p','muted','Also reported by: ' + [...new Set(references.map(r=>r.source))].join(', '));card.append(provenance);
+  }
   if (job.description) {
     const details = el('details','details');
     details.append(el('summary','','Read description'));
@@ -88,8 +97,24 @@ function renderJobs() {
       (state.filter === 'shortlist' && job.verdict === 'SHORTLIST') || (state.filter === 'review' && job.verdict === 'REVIEW');
     const industryOK = state.industry === 'all' || job.industry === state.industry;
     const label = (state.scan?.industries || []).find(item => item.id === job.industry)?.label || '';
-    return allow && industryOK && [job.title,job.company,job.location,job.description,label].some(item=>String(item || '').toLowerCase().includes(term));
+    const locationOK = String(job.location || '').toLowerCase().includes($('locationFilter').value.trim().toLowerCase());
+    const workplaceOK = !$('workplaceFilter').value || job.workplace_type === $('workplaceFilter').value;
+    const minimum = $('salaryFilter').value;
+    const salaryOK = !minimum || (job.salary_basis !== 'inferred' && job.salary_basis !== 'estimated' &&
+      (!job.salary_currency || job.salary_currency === 'GBP') && (!job.salary_period || job.salary_period === 'year') &&
+      typeof job.salary_min === 'number' && job.salary_min >= Number(minimum));
+    const occupationOK = String(job.occupation || '').toLowerCase().includes($('occupationFilter').value.trim().toLowerCase());
+    const sourceOK = !$('sourceFilter').value || job.source === $('sourceFilter').value || (job.source_references || []).some(r=>r.source === $('sourceFilter').value);
+    const days = $('freshnessFilter').value;
+    const age = job.date ? (Date.now() - Date.parse(job.date)) / 86400000 : NaN;
+    const freshOK = !days || (Number.isFinite(age) && age >= 0 && age <= Number(days));
+    const eligibilityOK = !$('eligibilityFilter').value || job.uk_eligibility === $('eligibilityFilter').value;
+    return allow && industryOK && locationOK && workplaceOK && salaryOK && occupationOK && sourceOK && freshOK && eligibilityOK && [job.title,job.company,job.location,job.description,label].some(item=>String(item || '').toLowerCase().includes(term));
   });
+  const sort = $('sortFilter').value;
+  filtered.sort((a,b)=> sort === 'newest' ? String(b.date || '').localeCompare(String(a.date || '')) :
+    sort === 'salary' ? (b.salary_min ?? -1) - (a.salary_min ?? -1) :
+    String(a[sort] || '').localeCompare(String(b[sort] || '')));
   if (!state.scan) return;
   $('resultsSummary').hidden=false;
   const visible = Math.min(filtered.length, state.renderLimit);
@@ -129,7 +154,14 @@ function renderIndustries() {
 }
 function showScan(scan) {
   state.scan=scan;state.jobs=scan.jobs || []; state.industry='all';state.renderLimit=60;
-  $('stats').hidden=false;$('filters').hidden=false;$('industrySection').hidden=false;
+  $('stats').hidden=false;$('filters').hidden=false;$('industrySection').hidden=false;$('browseFilters').hidden=false;
+  const previousSource = $('sourceFilter').value;
+  $('sourceFilter').replaceChildren();
+  const allSources=el('option','','All sources');allSources.value='';$('sourceFilter').append(allSources);
+  for (const source of [...new Set(state.jobs.flatMap(j=>[j.source,...(j.source_references || []).map(r=>r.source)]))].sort()) {
+    const option=el('option','',source);option.value=source;$('sourceFilter').append(option);
+  }
+  $('sourceFilter').value=previousSource;
   $('countShortlist').textContent=scan.counts.SHORTLIST || 0;
   $('countReview').textContent=scan.counts.REVIEW || 0;
   $('countSources').textContent=scan.demo ? 'Demo' : `${scan.sources_reached}/${scan.source_count}`;
@@ -138,13 +170,14 @@ function showScan(scan) {
   source.classList.toggle('demo',Boolean(scan.demo));
   const stamp = new Date(scan.checked_at).toLocaleTimeString('en-GB',{hour:'2-digit',minute:'2-digit'});
   if (scan.demo) source.textContent='DEMONSTRATION — These are fictional jobs. No actual vacancies have been checked.';
-  else source.textContent=`Checked at ${stamp}. Reached ${scan.sources_reached} of ${scan.source_count} enabled sources. ${scan.sources_disabled || 0} sources disabled. ${scan.excluded_non_uk || 0} overseas-only listings excluded. ${scan.coverage_note}` + (scan.errors.length ? ` ${scan.errors.length} source or record error(s): ${scan.errors.join(' | ')}` : '');
+  else if (scan.indexed && !scan.checked_at) source.textContent='No source checks yet. Use Refresh sources to populate your local index.';
+  else source.textContent=`${scan.indexed ? "Saved index. Last source check" : "Checked"} at ${stamp}. Reached ${scan.sources_reached} of ${scan.source_count} enabled sources. ${scan.sources_disabled || 0} sources disabled; ${scan.sources_blocked || 0} require permission review. ${scan.excluded_non_uk || 0} overseas-only listings excluded. ${scan.coverage_note}` + (scan.errors.length ? ` ${scan.errors.length} source or record error(s): ${scan.errors.join(' | ')}` : '');
   const health = $('coverageHealth');
   if (health) {
     clear(health);
     for (const row of scan.source_health || []) {
       health.append(el('li', row.status === 'ok' ? 'ok' : 'error',
-        `${row.name} (${row.provider}): ${row.status === 'ok' ? row.raw_count + ' returned' : 'unavailable — ' + row.error}`));
+        `${row.name} (${row.provider}): ${row.status === 'ok' ? row.raw_count + ' returned; ' + (row.live_count ?? row.raw_count) + ' seen in last successful snapshot; ' + (row.uk_eligible_seen ?? 0) + ' with explicit UK eligibility' : row.status + (row.error ? ' — ' + row.error : '')}${row.last_success ? '; last success ' + row.last_success : ''}; rights: ${row.permission_status || 'review required'}; ${row.fetch_scope || 'sample scan'}`));
     }
     const detail = $('coverageDetails'); if (detail) detail.hidden = !health.children.length;
   }
@@ -168,9 +201,9 @@ function setScope(scope, {resetText = false} = {}) {
 }
 async function runScan(scope = 'all', demo = false) {
   setScope(scope, {resetText:true});
-  const buttons=[$('searchAllBtn'),$('searchMatchesBtn'),$('demoBtn')];
+  const buttons=[$('searchAllBtn'),$('searchMatchesBtn'),$('demoBtn'),$('refreshBtn')];
   buttons.forEach(button => {button.disabled = true;});
-  $('sourceStatus').textContent = 'Checking every configured source across all industries…';
+  $('sourceStatus').textContent = 'Reading the local vacancy index…';
   try { showScan(await request('/api/jobs' +(demo ? '?demo=1':''))); }
   catch(e) { toast(`Couldn't complete the scan: ${e.message}`,true); $('sourceStatus').textContent = 'Source scan unsuccessful. Existing results, if any, are still available.'; }
   finally { buttons.forEach(button => {button.disabled = false;}); }
@@ -215,7 +248,7 @@ async function saveProfile(event){
   };
   try{await request('/api/profile',profile);state.profile=profile;state.scan=null;state.jobs=[];$('filters').hidden=true;$('stats').hidden=true;
     clear($('jobList'));const empty=el('div','empty');empty.append(el('h3','','Preferences saved'),el('p','','Now run a new scan. Your previous results were cleared because matching rules changed.'));$('jobList').append(empty);
-    $('industrySection').hidden=true;state.industry='all';$('resultsSummary').hidden=true;
+    $('industrySection').hidden=true;$('browseFilters').hidden=true;state.industry='all';$('resultsSummary').hidden=true;
     $('sourceStatus').textContent='Preferences updated. Run a live scan to refresh your matches.';switchTab('discover');toast('Your preferences were saved locally.');
   }catch(e){toast(e.message,true);}
 }
@@ -247,6 +280,17 @@ async function setup(){
   $('searchAllBtn').addEventListener('click',()=>runScan('all'));
   $('searchMatchesBtn').addEventListener('click',()=>runScan('matches'));
   $('demoBtn').addEventListener('click',()=>runScan('all',true));
+  $('refreshBtn').addEventListener('click',async()=>{
+    const buttons=[$('searchAllBtn'),$('searchMatchesBtn'),$('demoBtn'),$('refreshBtn')];
+    buttons.forEach(b=>{b.disabled=true;});
+    $('sourceStatus').textContent='Refreshing permitted sources. Sources checked recently respect their refresh interval…';
+    try {showScan(await request('/api/refresh',{}));}
+    catch(e) {toast(`Refresh failed: ${e.message}`,true);}
+    finally {buttons.forEach(b=>{b.disabled=false;});}
+  });
+  for (const id of ['locationFilter','workplaceFilter','salaryFilter','occupationFilter','sourceFilter','freshnessFilter','eligibilityFilter','sortFilter']) {
+    $(id).addEventListener('input',()=>{state.renderLimit=60;renderJobs();});
+  }
   $('searchInput').addEventListener('input',()=>{state.renderLimit=60;renderJobs();});$('goPreferences').addEventListener('click',()=>switchTab('settings'));
   $('industryPrev').addEventListener('click',()=>$('industryRail').scrollBy({left:-410,behavior:'smooth'}));
   $('industryNext').addEventListener('click',()=>$('industryRail').scrollBy({left:410,behavior:'smooth'}));

@@ -114,7 +114,9 @@ class CoverageTests(unittest.TestCase):
            'location':'London, UK','url':'https://www.reed.co.uk/jobs/risk-manager/1'}
         b={**a,'id':'greenhouse:1','source':'greenhouse',
            'url':'https://job-boards.greenhouse.io/example/jobs/1'}
-        self.assertEqual(unique_jobs([a,b]),[b])
+        result = unique_jobs([a,b])
+        self.assertEqual(result[0]['id'], b['id'])
+        self.assertEqual({r['source'] for r in result[0]['source_references']}, {'reed', 'greenhouse'})
 
 if __name__ == '__main__':
     unittest.main()

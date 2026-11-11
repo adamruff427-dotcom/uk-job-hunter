@@ -2,7 +2,7 @@
 
 **Open-source, configurable UK job discovery and evidence-led shortlisting, now with a private local browser interface.**
 
-**Latest: v0.5 wide-search connector preview.** The user-facing browser app lets jobseekers configure their preferences, scan jobs, explore industries in a horizontally scrollable carousel, explain each match, add employer boards, save job adverts, update application statuses and export their own tracker. No account or third-party Python package is required. This is not yet a hosted or production-validated service.
+**Latest: v0.6 persistent local index preview.** The user-facing browser app lets jobseekers configure their preferences, scan jobs, explore industries in a horizontally scrollable carousel, explain each match, add employer boards, save job adverts, update application statuses and export their own tracker. No account or third-party Python package is required. This is not yet a hosted or production-validated service.
 
 ```bash
 python3 -m uk_hunter web --open
@@ -64,13 +64,13 @@ The numeric score is **a transparent sorting heuristic, not a qualification asse
 
 ## Industry browsing and search coverage
 
-The v0.5 browser defaults to **Search everything**, which retrieves vacancies from all configured sources across industries without applying personal suitability gates. **Search for me** runs the same broad discovery but displays only the matched/review subset. Either mode can be narrowed by industry or free-text search (including job descriptions). The command-line equivalent is `python3 -m uk_hunter search --all` (use `--limit` for more output). These modes do **not** search every UK website; they only cover configured sources.
+The v0.5 browser defaults to **Search everything**, which reads indexed vacancies from all enabled and permitted sources across industries without applying personal suitability gates. **Search for me** runs the same broad discovery but displays only the matched/review subset. Either mode can be narrowed by industry or free-text search (including job descriptions). The command-line equivalent is `python3 -m uk_hunter search --all` (use `--limit` for more output). These modes do **not** search every UK website; they only cover configured sources.
 
 The browser has a **horizontal industry carousel** with counts and a separate **Relevant to me** filter. Selecting an industry shows every discovered vacancy in that sector, including jobs that do not match the local candidate profile. Counts represent records returned by the configured sources **at scan time**, not UK-wide vacancy totals. Choosing *All industries* returns to the complete discovery set.
 
 An industry describes the **employer's business**: a technology role in a bank belongs under Financial services. The system prefers the source registry's employer sector, then explicit industry metadata, then limited strong evidence in the posting; it uses *Unclassified* when uncertain. Employer sector is user-editable when adding a careers source. This categorisation is heuristic, not an official industry register.
 
-The expanded registry includes **40 public company careers boards** spanning finance, technology, healthcare, defence, energy, property, consumer retail, transport, hospitality, charities and consulting, including Monzo, Octopus Energy, Wise, Healios, Kaluza, Trainline and Babyzone. The newly added company boards were checked against publicly visible careers pages on 11 November 2026; the complete live API feeds and future access still need end-to-end validation. Board slugs and access may change, and a reachable source is no guarantee of an active suitable vacancy. The two optional wider UK APIs provide a path to nationwide discovery, **not a guarantee of full UK labour-market coverage**. See [Wide search](docs/WIDE_SEARCH.md) for how to enable them, fair-use and licence requirements.
+The expanded registry includes **42 configured public company careers boards** spanning finance, technology, healthcare, defence, energy, property, consumer retail, transport, hospitality, charities and consulting, including Monzo, Octopus Energy, Wise, Healios, Kaluza, Trainline and Babyzone. A bounded API check on 11 November 2026 returned records from seven of ten sampled boards; the other configured boards are unverified. See [recorded evidence](docs/live-source-check-2026-11-11.json). Board slugs and access may change, and a reachable source is no guarantee of an active suitable vacancy. The two optional wider UK APIs provide a path to nationwide discovery, **not a guarantee of full UK labour-market coverage**. See [Wide search](docs/WIDE_SEARCH.md) for how to enable them, fair-use and licence requirements.
 
 Clearly overseas-only adverts are excluded from the UK browsing view. Remote or unspecified postings whose UK eligibility cannot be established **remain visible for review**, not confirmed UK-eligible. Never infer permission to live or work in the UK from "Remote" alone.
 
@@ -99,10 +99,35 @@ For the source model, permissions and custom website setup, see [Source architec
 
 UK Job Hunter is released under the [MIT License](LICENSE). The optional upstream integration is derived from the public [AI Job Search](https://github.com/ai-job-search-dev/ai-job-search) workflow pattern (MIT; copyright © 2026 Mads Lorentzen). Preserve the original licence and copyright when redistributing its code. See [NOTICE.md](NOTICE.md).
 
-## Development status
+## Persistent index and development status
 
-**Public product preview v0.5.** 106 automated tests passed locally, including Reed/Adzuna pagination, disabled sources and per-source error reporting. Live ATS API access and a full upstream end-to-end run have **not yet** been validated in this build environment. Features should not be described as production proven. Improvements and verified UK ATS sources are welcome via issues and pull requests.
+The public source is published at https://github.com/adamruff427-dotcom/uk-job-hunter.
+The separate private workspace contains only a launcher and documentation.
+The app remains a local preview; it has not been publicly hosted.
 
-## Publishing this version
+```sh
+python3 -m uk_hunter refresh
+python3 -m uk_hunter search --indexed --all
+python3 -m uk_hunter web --open
+```
 
-**This ZIP is not yet pushed to GitHub.** A new empty public repository must first be created in the GitHub account. See [GitHub setup](GITHUB_SETUP.md) and run `python3 scripts/check_public_release.py` before the first commit. Keep your private `local_config/` out of public history.
+Use **Refresh sources** explicitly, then browse saved results without refetching.
+See [index storage, refresh and expiry rules](docs/INDEX.md),
+[provider rights review](docs/PROVIDER_REVIEW.md), and [GitHub setup](GITHUB_SETUP.md).
+The browser adds location, workplace, advertised annual GBP pay, occupation,
+source, freshness and explicit UK-eligibility filters, sorting and pagination.
+Unknown data remains unknown. No automatic applications or private-data sync.
+
+For local verification:
+
+```sh
+python3 -m unittest discover -s tests -q
+python3 scripts/check_public_release.py
+npm ci
+npx playwright install chromium
+npm run test:browser
+```
+
+The Python application still needs only the standard library. Node/Playwright and
+axe are development-only dependencies for the mocked browser and accessibility
+regression. See [index documentation](docs/INDEX.md) for operational limitations.

@@ -13,7 +13,7 @@
   <header class="site-header">
     <div class="wrap nav">
       <a href="/" class="brand" aria-label="UK Job Hunter home"><span class="brand-icon">JH</span> <span>UK Job Hunter</span></a>
-      <div class="nav-right"><span class="local-pill"><span class="local-dot"></span> Private on this device</span><span class="version">Product preview · v0.5.0</span></div>
+      <div class="nav-right"><span class="local-pill"><span class="local-dot"></span> Private on this device</span><span class="version">Product preview · v0.6.0</span></div>
     </div>
   </header>
   <main class="wrap">
@@ -31,7 +31,7 @@
     <section id="discover" class="panel" aria-label="Discover jobs">
       <div class="action-bar">
         <div><h2>Find your next role</h2><p class="muted">Discover across configured company careers pages and optional licensed job feeds. Always verify the vacancy on its source.</p></div>
-        <div class="actions"><button id="demoBtn" class="btn ghost" type="button">Preview example jobs</button></div>
+        <div class="actions"><button id="refreshBtn" class="btn primary" type="button">Refresh sources</button><button id="demoBtn" class="btn ghost" type="button">Preview example jobs</button></div>
       </div>
       <div class="search-modes" role="group" aria-label="Choose your search scope">
         <button id="searchAllBtn" class="search-mode selected" type="button" aria-pressed="true">
@@ -44,7 +44,7 @@
         </button>
       </div>
       <p class="search-scope-note" id="scopeDescription">Searching everything means all configured sources, not every vacancy advertised in the UK. You can narrow results afterwards by industry or keyword.</p>
-      <div id="sourceStatus" class="source-status">Scan enabled sources to browse UK jobs by industry. Coverage depends on connected sources.</div>
+      <div id="sourceStatus" class="source-status">Refresh sources once, then browse the saved index. Search buttons use local results without fetching sources.</div>
       <details id="coverageDetails" class="coverage-details" hidden><summary>Source coverage and errors</summary><ul id="coverageHealth"></ul></details>
       <div class="stats" id="stats" hidden>
         <div class="stat"><span class="stat-number" id="countShortlist">0</span><span class="stat-label">Strong first matches</span></div>
@@ -68,8 +68,18 @@
           <button class="filter active" type="button" data-filter="all">All vacancies</button>
         </div>
       </div>
+      <div id="browseFilters" class="browse-filters" hidden>
+        <label>Location<input id="locationFilter" type="search" placeholder="Town, region or country"></label>
+        <label>Workplace<select id="workplaceFilter"><option value="">Any arrangement</option><option value="remote">Remote</option><option value="hybrid">Hybrid</option><option value="onsite">Onsite</option></select></label>
+        <label>Minimum advertised annual GBP<input id="salaryFilter" type="number" min="0" max="1000000" placeholder="Unknown pay excluded when set"></label>
+        <label>Occupation / team<input id="occupationFilter" type="search" placeholder="Published job family"></label>
+        <label>Source<select id="sourceFilter"><option value="">All sources</option></select></label>
+        <label>Posted within<select id="freshnessFilter"><option value="">Any / unknown date</option><option value="7">7 days (known dates)</option><option value="30">30 days (known dates)</option></select></label>
+        <label>UK eligibility<select id="eligibilityFilter"><option value="">Include unknown for review</option><option value="confirmed_uk">Explicit UK eligibility only</option></select></label>
+        <label>Sort<select id="sortFilter"><option value="title">Job title</option><option value="newest">Newest known posting</option><option value="salary">Advertised salary, highest first</option><option value="company">Employer</option></select></label>
+      </div>
       <p id="resultsSummary" class="results-summary" hidden aria-live="polite"></p>
-      <div id="jobList" class="job-list"><div class="empty"><div class="empty-icon">⌕</div><h3>Ready when you are</h3><p>Start with Search everything to see all available vacancies, then browse by industry or set preferences for more targeted matching. You can also preview the interface using fictional example jobs.</p><button class="btn ghost" id="goPreferences" type="button">Set my preferences</button></div></div>
+      <div id="jobList" class="job-list"><div class="empty"><div class="empty-icon">⌕</div><h3>Ready when you are</h3><p>Refresh sources, then use Search everything to browse indexed vacancies, then browse by industry or set preferences for more targeted matching. You can also preview the interface using fictional example jobs.</p><button class="btn ghost" id="goPreferences" type="button">Set my preferences</button></div></div>
     </section>
     <section id="tracker" class="panel" aria-label="My applications" hidden>
       <div class="action-bar"><div><h2>My applications</h2><p class="muted">Keep track of the jobs you want and what happened next.</p></div><a href="/api/export" class="btn ghost" id="exportBtn">Export my tracker</a></div>

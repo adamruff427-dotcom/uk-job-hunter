@@ -16,13 +16,20 @@ This release is a **local browser product preview**, not a hosted website. You n
 6. Choose **Preview example jobs** to explore 10 *fictional* vacancies across several industries, or **Scan live jobs** to query the configured employer sources.
 7. Swipe or use the arrows on **Explore by industry** and select a sector. Select **All industries** to reset; use **Relevant to me** to limit results to roles that passed the initial profile triage. To cover more companies, use **My preferences → Employer sources** and add an employer's public Greenhouse, Lever, Ashby or SmartRecruiters career-board URL. Pick that employer's industry to classify its jobs.
 8. To add a **normal company website** (not one of the four ATS services), provide its HTTPS careers URL plus a *job detail page path prefix* such as `/careers/jobs/`. The website must publish schema.org JobPosting data and allow this access via `robots.txt`. No structured data = explicit failure rather than invented vacancies. More details in [Source architecture](docs/SOURCES_ARCHITECTURE.md).
-9. To expand beyond the 40 employer feeds, configure optional credentialled **Reed and Adzuna** integrations for broad UK search. Copy source examples to your ignored local sources override and set the API keys in your environment, never the repository. Review commercial terms before publication. See [Wide search](docs/WIDE_SEARCH.md).
+9. To expand beyond the 42 configured employer feeds, configure optional credentialled **Reed and Adzuna** integrations for broad UK search. Copy source examples to your ignored local sources override and set the API keys in your environment, never the repository. Review commercial terms before publication. See [Wide search](docs/WIDE_SEARCH.md).
 10. Save promising real vacancies under **My applications**, add notes, update their status or export the tracker as JSON.
 11. Press **Ctrl+C** in the terminal to stop the app.
 
+## Persistent browsing (v0.6)
+
+Run `python3 -m uk_hunter refresh`, or select **Refresh sources** in the local app.
+Search buttons then read the saved index. Use `python3 -m uk_hunter search --indexed --all`
+for offline CLI browsing. Optional licensed and website sources require explicit
+permission review in addition to credentials/enabling; see [Index](docs/INDEX.md).
+
 ## Important limitations
 
-The scanner knows only the employer sources and optional licensed providers configured under `config/sources.json` or locally through the app. 40 employer boards are included as starting sources across several industries; this is not comprehensive UK job search. Some industries have no default coverage. An employer may change board provider or restrict API access, and requests can fail. A failed feed is shown as a source error, not evidence that no jobs exist.
+The scanner knows only the employer sources and optional licensed providers configured under `config/sources.json` or locally through the app. 42 configured employer boards are included as starting sources across several industries; this is not comprehensive UK job search. Some industries have no default coverage. An employer may change board provider or restrict API access, and requests can fail. A failed feed is shown as a source error, not evidence that no jobs exist.
 
 Industry reflects the employer, not the job title, and may be unclassified when evidence is missing. Overseas-only adverts are excluded when this is unambiguous; remote eligibility can still be unknown. The product does not verify your qualifications, write applications, import CVs, submit forms or check the latest state of a job when you open it later. The initial matching is conservative keyword/rule triage, not an AI opinion or a prediction of being hired. Always read the employer's advert.
 

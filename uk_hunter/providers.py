@@ -171,9 +171,19 @@ def fetch_feed(company_source: dict, timeout: int = 15) -> list[dict]:
     if provider == "website":
         from .website import fetch_website_feed
         return fetch_website_feed(company_source)
+    return fetch_snapshot(company_source, timeout=timeout)[0]
+
+
+def fetch_snapshot(company_source: dict, validators=None, timeout=15):
+    """Conditional GET for single-response ATS feeds; 304 preserves the snapshot."""
+    provider = company_source["provider"]
     board = company_source["board"]
-    request = Request(endpoint(provider, board), headers={"Accept": "application/json", "User-Agent": "UKJobHunterOpenSource/0.1"}, method="GET")
-    # Redirects could take us off the approved ATS host; disallow redirects entirely.
+    headers = {"Accept": "application/json", "User-Agent": "UKJobHunterOpenSource/0.6"}
+    for key, header in (("etag", "If-None-Match"), ("last_modified", "If-Modified-Since")):
+        value = (validators or {}).get(key)
+        if isinstance(value, str) and len(value) < 500 and not any(c in value for c in "\r\n"):
+            headers[header] = value
+    request = Request(endpoint(provider, board), headers=headers, method="GET")
     from urllib.request import build_opener, HTTPRedirectHandler
     class NoRedirect(HTTPRedirectHandler):
         def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -184,22 +194,43 @@ def fetch_feed(company_source: dict, timeout: int = 15) -> list[dict]:
             if response.geturl() != request.full_url:
                 raise ValueError("Unexpected redirect")
             raw = response.read(10_000_001)
-    except (HTTPError, URLError, TimeoutError) as exc:
-        raise RuntimeError(f"{company_source['name']}: source request failed ({exc})") from exc
+            response_headers = getattr(response, 'headers', {})
+            new_validators = {k: response_headers[h] for k, h in
+                              (("etag", "ETag"), ("last_modified", "Last-Modified"))
+                              if isinstance(response_headers.get(h), str)}
+    except HTTPError as exc:
+        if exc.code == 304 and validators:
+            return [], validators, True
+        raise RuntimeError("ATS request failed (HTTP " + str(exc.code) + ")") from None
+    except (URLError, TimeoutError):
+        raise RuntimeError("ATS request failed; check access and network") from None
     if len(raw) > 10_000_000:
-        raise RuntimeError(f"{company_source['name']}: feed exceeds 10 MB safety limit")
+        raise RuntimeError("ATS feed exceeds 10 MB safety limit")
     try:
         obj = json.loads(raw)
-    except (ValueError, UnicodeDecodeError) as exc:
-        raise RuntimeError(f"{company_source['name']}: invalid JSON") from exc
+    except (ValueError, UnicodeDecodeError):
+        raise RuntimeError("ATS returned invalid JSON") from None
     items = obj if provider == "lever" else obj.get("jobs") if isinstance(obj, dict) else None
     if not isinstance(items, list):
-        raise RuntimeError(f"{company_source['name']}: unexpected feed schema")
+        raise RuntimeError("ATS returned unexpected feed schema")
     results = []
     for item in items:
         if not isinstance(item, dict):
-            continue
+            raise RuntimeError("ATS returned malformed posting")
         record = normalized(company_source["name"], provider, board, item)
         if record:
+            if provider == 'ashby':
+                address = (item.get('address') or {}).get('postalAddress') or {}
+                countries = [str(address.get('addressCountry') or '')]
+                countries += [str(((x.get('address') or {}).get('postalAddress') or x.get('address') or {}).get('addressCountry') or '')
+                              for x in item.get('secondaryLocations', []) if isinstance(x, dict)]
+                # Any explicit UK location is sufficient; multiple overseas
+                # countries must not erase a UK secondary location.
+                record['country'] = 'GB' if any(c.casefold() in {'gb', 'gbr', 'uk', 'united kingdom'} for c in countries) else next((c for c in countries if c), None)
+                record['occupation'] = item.get('department') or None
+                record['source_metadata'] = {'department': item.get('department'), 'employment_type': item.get('employmentType')}
+            elif provider == 'lever':
+                record['country'] = item.get('country') or None
+                record['occupation'] = (item.get('categories') or {}).get('team') or None
             results.append(record)
-    return results
+    return results, new_validators, False

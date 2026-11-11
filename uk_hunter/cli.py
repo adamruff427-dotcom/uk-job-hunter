@@ -7,6 +7,7 @@ import json
 from pathlib import Path
 import sys
 import shutil
+import os
 from typing import Any
 from urllib.parse import urlsplit
 
@@ -14,6 +15,12 @@ from .evaluate import evaluate
 from .providers import fetch_feed
 
 ROOT = Path(__file__).resolve().parents[1]
+
+def data_dir() -> Path:
+    return Path(os.environ.get("UK_HUNTER_DATA_DIR", str(ROOT / "local_config"))).expanduser().absolute()
+
+
+DATA_DIR = data_dir()
 
 
 def load_config(path: Path) -> Any:
@@ -24,7 +31,7 @@ def load_config(path: Path) -> Any:
 def default_profile_path() -> Path:
     """Prioritise private overrides, including legacy v0.1 overlay paths."""
     for path in (
-        ROOT / "local_config" / "search_profile.json",
+        data_dir() / "search_profile.json",
         ROOT / "config" / "search_profile.json",
         ROOT / "config" / "profile.example.json",
     ):
@@ -76,7 +83,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="UK read-only job scanner: employer APIs, structured careers sites and optional licensed boards")
     sub = parser.add_subparsers(dest="command", required=True)
     initial = sub.add_parser("init", help="Create a local, Git-ignored search profile from the public example")
-    initial.add_argument("--output", type=Path, default=ROOT / "local_config" / "search_profile.json")
+    initial.add_argument("--output", type=Path, default=DATA_DIR / "search_profile.json")
+    refresh = sub.add_parser("refresh", help="Refresh the persistent local vacancy index")
+    refresh.add_argument("--sources", type=Path, default=(DATA_DIR / "sources.json" if (DATA_DIR / "sources.json").exists() else ROOT / "config" / "sources.json"))
+    refresh.add_argument("--index", type=Path, default=DATA_DIR / "vacancies.sqlite3")
+    refresh.add_argument("--force", action="store_true", help="Ignore source refresh interval (manual diagnostics only)")
+    refresh.add_argument("--retries", type=int, choices=range(3), default=1)
+    refresh.add_argument("--interval", type=int, default=3600)
     find = sub.add_parser("search")
     find.add_argument("--query", "-q", default="", help="Optional keyword filter across title, company, location and description")
     find.add_argument("--all", action="store_true", help="Search everything: include vacancies outside personal match preferences")
@@ -85,7 +98,9 @@ def main(argv: list[str] | None = None) -> int:
     find.add_argument("--limit", "-n", type=int, default=30)
     find.add_argument("--format", choices=["table", "json", "md", "plain"], default="table")
     find.add_argument("--remote", choices=["remote", "hybrid", "onsite"], default=None, help="Optional strict workplace filter")
-    find.add_argument("--sources", type=Path, default=ROOT / "config" / "sources.json")
+    find.add_argument("--sources", type=Path, default=(DATA_DIR / "sources.json" if (DATA_DIR / "sources.json").exists() else ROOT / "config" / "sources.json"))
+    find.add_argument("--indexed", action="store_true", help="Read the persistent local index without fetching providers")
+    find.add_argument("--index", type=Path, default=DATA_DIR / "vacancies.sqlite3")
     find.add_argument("--profile", type=Path, default=default_profile_path())
     find.add_argument("--write-report", type=Path, default=None, help="Save Markdown report to local path")
     browser = sub.add_parser("web", help="Launch the private local browser app")
@@ -94,7 +109,7 @@ def main(argv: list[str] | None = None) -> int:
     detail = sub.add_parser("detail")
     detail.add_argument("job_url", help="Previously returned job URL; never fetched directly")
     detail.add_argument("--format", choices=["json", "plain"], default="plain")
-    detail.add_argument("--sources", type=Path, default=ROOT / "config" / "sources.json")
+    detail.add_argument("--sources", type=Path, default=(DATA_DIR / "sources.json" if (DATA_DIR / "sources.json").exists() else ROOT / "config" / "sources.json"))
     args = parser.parse_args(argv)
     if args.command == "web":
         from .webapp import serve
@@ -107,8 +122,10 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Refusing to overwrite existing profile: {args.output}", file=sys.stderr)
             return 1
         try:
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(ROOT / "config" / "profile.example.json", args.output)
+            args.output.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+            fd = os.open(args.output, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+            with os.fdopen(fd, 'wb') as stream:
+                stream.write((ROOT / "config" / "profile.example.json").read_bytes())
         except OSError as exc:
             print(f"Could not initialize profile: {exc}", file=sys.stderr)
             return 1
@@ -118,6 +135,11 @@ def main(argv: list[str] | None = None) -> int:
         sources = load_config(args.sources)["sources"]
         if not isinstance(sources, list) or not sources:
             raise ValueError("Configure at least one source in sources.json")
+        if args.command == "refresh":
+            from .index import VacancyIndex
+            result = VacancyIndex(args.index).refresh(sources, retries=args.retries, interval=args.interval, force=args.force)
+            print(json.dumps({k: v for k, v in result.items() if k != "jobs"}, indent=2))
+            return 2 if result["source_count"] and not result["sources_reached"] else 0
         if args.command == "search":
             if args.location.lower() not in {"uk", "gb", "remote", "united kingdom", "great britain"}:
                 parser.error("This build supports the UK only; use --location 'United Kingdom' or 'Remote'")
@@ -125,7 +147,13 @@ def main(argv: list[str] | None = None) -> int:
                 parser.error("limit must be 1..500 and jobage >=1")
             profile = load_config(args.profile)
         jobs, errors = [], []
-        for source in sources:
+        from .index import permitted, VacancyIndex
+        active = [source for source in sources if permitted(source)]
+        if args.command == 'search' and args.indexed:
+            snapshot = VacancyIndex(args.index).snapshot(sources)
+            jobs, errors = snapshot['jobs'], snapshot['errors']
+            active = []
+        for source in active:
             if source.get("enabled", True) is False:
                 continue
             try:
@@ -142,7 +170,10 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         from .dedupe import unique_jobs
         scored = []
+        from .uk_scope import obviously_non_uk
         for j in unique_jobs(jobs):
+            if j.get('uk_eligibility') == 'non_uk' or obviously_non_uk(j.get('location', '')):
+                continue
             if args.query and args.query.casefold() not in " ".join(str(j.get(k) or "") for k in ("title", "company", "location", "description")).casefold():
                 continue
             if args.remote is not None and j.get("workplace_type", "unknown") != args.remote:
@@ -163,7 +194,7 @@ def main(argv: list[str] | None = None) -> int:
             args.write_report.parent.mkdir(parents=True, exist_ok=True)
             args.write_report.write_text(format_markdown(shown, errors, include_all=args.all), encoding="utf-8")
         # Nonzero when *every* feed failed so unattended scans cannot falsely declare no jobs.
-        return 2 if errors and len(errors) == len(sources) else 0
+        return 2 if errors and not jobs else 0
     except (ValueError, OSError, KeyError, TypeError) as exc:
         print(json.dumps({"code": "CONFIG_ERROR", "error": str(exc)}), file=sys.stderr)
         return 1

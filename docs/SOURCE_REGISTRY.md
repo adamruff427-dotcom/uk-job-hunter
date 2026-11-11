@@ -1,3 +1,16 @@
+# Current registry status — v0.6
+
+42 employer boards are configured; seven successfully returned records in the
+bounded live sample on 11 November 2026. Wikimedia Foundation and Mozilla were
+added after returning 16 and 114 raw records respectively, including overseas
+and unknown-eligibility vacancies. Three of the ten sampled boards failed.
+Other boards are configured and unverified. See [machine-readable evidence](live-source-check-2026-11-11.json),
+[provider review](PROVIDER_REVIEW.md) and [persistent source health](INDEX.md).
+Per-source runtime timestamps, errors and record counts live in the local SQLite
+registry, not in public Git commits. Commercial redistribution remains unapproved.
+
+## Historical v0.5 source notes
+
 # Employer source registry
 
 **Curated registry (11 November 2026): 40 configured employer feeds.** The public careers pages for the 16 new entries were checked for an identifiable live board; the complete APIs, locations and future availability still require monitoring. The original entries have not been independently revalidated in this release.

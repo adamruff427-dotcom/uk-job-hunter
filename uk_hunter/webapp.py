@@ -17,17 +17,17 @@ import time
 from typing import Any
 from urllib.parse import urlsplit, unquote
 
-from .cli import ROOT, default_profile_path, load_config
+from .cli import ROOT, DATA_DIR, default_profile_path, load_config
 from .evaluate import evaluate
 from .providers import fetch_feed, valid_job_link
 from .industries import classify, industry_counts, LABELS
 from .uk_scope import obviously_non_uk
 
 STATIC = Path(__file__).resolve().parent / "static"
-STATE_FILE = ROOT / "local_config" / "tracker.json"
-PROFILE_FILE = ROOT / "local_config" / "search_profile.json"
+STATE_FILE = DATA_DIR / "tracker.json"
+PROFILE_FILE = DATA_DIR / "search_profile.json"
 SOURCES_FILE = ROOT / "config" / "sources.json"
-LOCAL_SOURCES_FILE = ROOT / "local_config" / "sources.json"
+LOCAL_SOURCES_FILE = DATA_DIR / "sources.json"
 PROFILE_EXAMPLE = ROOT / "config" / "profile.example.json"
 STATUS = {"saved", "applied", "interview", "offer", "rejected", "closed", "dismissed"}
 ALLOWED_LISTS = {
@@ -214,7 +214,7 @@ def update_sources(payload: Any) -> list[dict]:
     return sources
 
 
-def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=False) -> dict:
+def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=False, snapshot=None) -> dict:
     """Fetch configured employer boards in parallel and retain source failures."""
     profile = validate_profile(profile)
     active_sources = [s for s in sources if s.get("enabled", True) is not False]
@@ -223,6 +223,9 @@ def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=Fa
         jobs = demo_jobs()
         failures: list[str] = []
         reached = 0
+    elif snapshot is not None:
+        jobs, failures, reached = snapshot['jobs'], list(snapshot['errors']), snapshot['sources_reached']
+        source_health = snapshot['source_health']
     else:
         jobs, failures, reached = [], [], 0
         if active_sources:
@@ -246,11 +249,11 @@ def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=Fa
     output = []
     excluded_non_uk = 0
     for job in unique_jobs(jobs):
-        if obviously_non_uk(job.get("location", "")):
+        if job.get("uk_eligibility") == "non_uk" or obviously_non_uk(job.get("location", "")):
             excluded_non_uk += 1
             continue
         try:
-            category, basis = classify(job, job.get("_source_sector"))
+            category, basis = (job["industry"], job.get("industry_basis", "unknown")) if job.get("industry") in LABELS else classify(job, job.get("_source_sector"))
             clean_job = {k: v for k, v in job.items() if k != "_source_sector"}
             evaluated = evaluate(clean_job, profile)
             evaluated["industry"], evaluated["industry_basis"] = category, basis
@@ -274,7 +277,11 @@ def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=Fa
         "sources_reached": reached,
         "sources_disabled": len(sources) - len(active_sources),
         "source_health": source_health,
-        "checked_at": datetime.now(timezone.utc).isoformat(),
+        "configured_source_count": len(sources),
+        "sources_checked": snapshot.get('sources_checked', 0) if snapshot is not None else reached,
+        "indexed": snapshot is not None,
+        "sources_blocked": snapshot.get('sources_blocked', 0) if snapshot else 0,
+        "checked_at": snapshot.get('checked_at') if snapshot is not None else datetime.now(timezone.utc).isoformat(),
         "demo": demo,
         "coverage_note": "Searches enabled sources, not the entire UK labour market. Wide-area APIs require credentials and permitted reuse; overseas-only roles are excluded, but unknown eligibility requires checking.",
     }
@@ -305,11 +312,13 @@ class App(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = True
 
-    def __init__(self, address, *, tracker: Tracker | None = None):
+    def __init__(self, address, *, tracker: Tracker | None = None, index_path: Path | None = None):
         if address[0] not in {"127.0.0.1", "::1", "localhost"}:
             raise ValueError("For privacy, UK Job Hunter only serves on the local machine")
         super().__init__(address, Handler)
         self.tracker = tracker or Tracker()
+        # Lazy creation keeps merely viewing static pages free of disk writes.
+        self.index_path = index_path or DATA_DIR / "vacancies.sqlite3"
         self.cache: dict[str, Any] | None = None
         self.cached_at = 0.0
         self.cache_lock = threading.Lock()
@@ -375,11 +384,9 @@ class Handler(BaseHTTPRequestHandler):
                 if demo:
                     return self._json(scan_jobs(profile, sources, demo=True))
                 with self.server.cache_lock:
-                    if self.server.cache is not None and time.monotonic() - self.server.cached_at < 600:
-                        return self._json(self.server.cache)
-                    result = scan_jobs(profile, sources)
-                    self.server.cache, self.server.cached_at = result, time.monotonic()
-                    return self._json(result)
+                    from .index import VacancyIndex
+                    snapshot = VacancyIndex(self.server.index_path).snapshot(sources)
+                    return self._json(scan_jobs(profile, sources, snapshot=snapshot))
             except Exception as exc:
                 return self._json({"error": f"Scan failed: {exc}"}, 500)
         return self._json({"error": "Not found"}, 404)
@@ -398,6 +405,12 @@ class Handler(BaseHTTPRequestHandler):
                 raise ValueError("Invalid request size")
             payload = json.loads(self.rfile.read(size))
             route = urlsplit(self.path).path
+            if route == "/api/refresh":
+                from .index import VacancyIndex
+                with self.server.cache_lock:
+                    sources = read_sources()
+                    snapshot = VacancyIndex(self.server.index_path).refresh(sources)
+                return self._json(scan_jobs(read_profile(), sources, snapshot=snapshot))
             if route == "/api/profile":
                 profile = validate_profile(payload)
                 write_private_json(PROFILE_FILE, profile)

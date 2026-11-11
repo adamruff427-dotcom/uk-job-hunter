@@ -21,6 +21,12 @@ def install(target: Path, disable_other_portals: bool = True) -> list[str]:
     if not (target / "AGENTS.md").exists() or not (target / ".claude/skills/job-scraper/SKILL.md").exists():
         raise ValueError("Target must be a clone of ai-job-search containing AGENTS.md and the /scrape skill")
     changes = []
+    # Keep the installed overlay self-contained so its copied installer and
+    # extension tests also work when run from the upstream checkout.
+    resource = target / 'docs/UK_SEARCH_QUERIES.md'
+    resource.parent.mkdir(parents=True, exist_ok=True)
+    if not resource.exists():
+        shutil.copy2(SOURCE / 'docs/UK_SEARCH_QUERIES.md', resource)
     shutil.copytree(SOURCE / "uk_hunter", target / "uk_hunter", dirs_exist_ok=True,
                     ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     changes.append("installed uk_hunter/")
@@ -73,13 +79,22 @@ def install(target: Path, disable_other_portals: bool = True) -> list[str]:
 
     test_dest = target / "tests/test_uk_hunter_extension.py"
     test_dest.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copy2(SOURCE / "tests/test_uk_hunter.py", test_dest)
+    source_test = SOURCE / "tests/test_uk_hunter.py"
+    if not source_test.exists():
+        source_test = SOURCE / "tests/test_uk_hunter_extension.py"
+    shutil.copy2(source_test, test_dest)
     changes.append("installed tests/test_uk_hunter_extension.py")
-    shutil.copy2(SOURCE / "tests/test_web_sources.py", target / "tests/test_uk_web_sources_extension.py")
+    source_test = SOURCE / "tests/test_web_sources.py"
+    if not source_test.exists():
+        source_test = SOURCE / "tests/test_uk_web_sources_extension.py"
+    shutil.copy2(source_test, target / "tests/test_uk_web_sources_extension.py")
     changes.append("installed tests/test_uk_web_sources_extension.py")
 
     for name, destination in [("README_UK.md", "UK_JOB_HUNTER.md"), ("CODEX_HANDOFF.md", "CODEX_HANDOFF.md"), ("install_into_upstream.py", "install_into_upstream.py")]:
-        shutil.copy2(SOURCE / name, target / destination)
+        source = SOURCE / name
+        if not source.exists() and name == 'README_UK.md':
+            source = SOURCE / 'UK_JOB_HUNTER.md'
+        shutil.copy2(source, target / destination)
         changes.append(f"installed {destination}")
 
     agents = target / "AGENTS.md"

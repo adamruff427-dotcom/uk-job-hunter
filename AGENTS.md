@@ -1,4 +1,4 @@
-> Current version v0.5; 40 curated employer feeds, optional licensed Reed/Adzuna integration, source health. No GitHub remote has been created. See GITHUB_SETUP.md and docs/WIDE_SEARCH.md.
+> Current version v0.6; 42 configured employer feeds, seven successfully sampled, persistent local index. Public GitHub code is published. See GITHUB_SETUP.md and docs/WIDE_SEARCH.md.
 
 # Agent instructions — public UK Job Hunter
 

@@ -5,28 +5,64 @@
       "provider": "greenhouse",
       "board": "monzo",
       "url": "https://job-boards.greenhouse.io/monzo",
-      "sector": "banking"
+      "sector": "banking",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:56:54.933705+00:00",
+      "last_sample_raw_count": 66
     },
     {
       "name": "Griffin",
       "provider": "ashby",
       "board": "griffin",
       "url": "https://jobs.ashbyhq.com/griffin",
-      "sector": "banking"
+      "sector": "banking",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:56:55.719269+00:00",
+      "last_sample_raw_count": 5
     },
     {
       "name": "Octopus Energy",
       "provider": "lever",
       "board": "octoenergy",
       "url": "https://jobs.lever.co/octoenergy",
-      "sector": "energy"
+      "sector": "energy",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:56:58.449848+00:00",
+      "last_sample_raw_count": 162
     },
     {
       "name": "Anduril Industries",
       "provider": "greenhouse",
       "board": "andurilindustries",
       "url": "https://job-boards.greenhouse.io/andurilindustries",
-      "sector": "defence technology"
+      "sector": "defence technology",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_failed",
+      "last_sample_checked": "2026-11-11T19:57:15.105552+00:00",
+      "last_sample_raw_count": 0
     },
     {
       "name": "Wise",
@@ -34,7 +70,17 @@
       "board": "Wise",
       "url": "https://careers.smartrecruiters.com/Wise",
       "sector": "financial technology",
-      "max_details": 25
+      "max_details": 25,
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:57:17.312246+00:00",
+      "last_sample_raw_count": 2,
+      "sample_detail_cap": 2
     },
     {
       "name": "Turner & Townsend",
@@ -42,245 +88,525 @@
       "board": "TurnerTownsend",
       "url": "https://careers.smartrecruiters.com/TurnerTownsend",
       "sector": "consultancy",
-      "max_details": 25
+      "max_details": 25,
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:57:21.330124+00:00",
+      "last_sample_raw_count": 2,
+      "sample_detail_cap": 2
     },
     {
       "name": "Tide",
       "provider": "greenhouse",
       "board": "tide",
       "url": "https://job-boards.greenhouse.io/tide",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Zopa",
       "provider": "lever",
       "board": "zopa",
       "url": "https://jobs.lever.co/zopa",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Tandem Bank",
       "provider": "greenhouse",
       "board": "tandemmoneylimited",
       "url": "https://job-boards.greenhouse.io/tandemmoneylimited",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Healios",
       "provider": "greenhouse",
       "board": "healios",
       "url": "https://job-boards.greenhouse.io/healios",
-      "sector": "healthcare"
+      "sector": "healthcare",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Skin Analytics",
       "provider": "ashby",
       "board": "skin-analytics",
       "url": "https://jobs.ashbyhq.com/skin-analytics",
-      "sector": "healthcare"
+      "sector": "healthcare",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Kaluza",
       "provider": "ashby",
       "board": "kaluza",
       "url": "https://jobs.ashbyhq.com/kaluza",
-      "sector": "energy-utilities"
+      "sector": "energy-utilities",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Babyzone",
       "provider": "greenhouse",
       "board": "babyzone",
       "url": "https://job-boards.greenhouse.io/babyzone",
-      "sector": "charities"
+      "sector": "charities",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Lookers",
       "provider": "greenhouse",
       "board": "lookers",
       "url": "https://job-boards.greenhouse.io/lookers",
-      "sector": "retail-consumer"
+      "sector": "retail-consumer",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Plentific",
       "provider": "ashby",
       "board": "plentific",
       "url": "https://jobs.ashbyhq.com/plentific",
-      "sector": "construction-property"
+      "sector": "construction-property",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "loveholidays",
       "provider": "ashby",
       "board": "loveholidays",
       "url": "https://jobs.ashbyhq.com/loveholidays",
-      "sector": "hospitality-leisure"
+      "sector": "hospitality-leisure",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "THG Ingenuity",
       "provider": "greenhouse",
       "board": "thgingenuity",
       "url": "https://job-boards.greenhouse.io/thgingenuity",
-      "sector": "technology"
+      "sector": "technology",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "WHOOP",
       "provider": "ashby",
       "board": "whoop",
       "url": "https://jobs.ashbyhq.com/whoop",
-      "sector": "retail-consumer"
+      "sector": "retail-consumer",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Duffel",
       "provider": "ashby",
       "board": "duffel",
       "url": "https://jobs.ashbyhq.com/duffel",
-      "sector": "transport-logistics"
+      "sector": "transport-logistics",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Super Payments",
       "provider": "greenhouse",
       "board": "superpayments",
       "url": "https://job-boards.greenhouse.io/superpayments",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Levels Technologies",
       "provider": "ashby",
       "board": "levels",
       "url": "https://jobs.ashbyhq.com/levels",
-      "sector": "construction-property"
+      "sector": "construction-property",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Adaptyv",
       "provider": "ashby",
       "board": "adaptyv",
       "url": "https://jobs.ashbyhq.com/adaptyv",
-      "sector": "healthcare"
+      "sector": "healthcare",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Trainline",
       "provider": "ashby",
       "board": "trainline",
       "url": "https://jobs.ashbyhq.com/trainline",
-      "sector": "transport-logistics"
+      "sector": "transport-logistics",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Deliveroo",
       "provider": "greenhouse",
       "board": "deliveroo",
       "url": "https://job-boards.greenhouse.io/deliveroo",
-      "sector": "transport-logistics"
+      "sector": "transport-logistics",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Peregrine",
       "provider": "greenhouse",
       "board": "peregrine",
       "url": "https://job-boards.greenhouse.io/peregrine",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Lendable",
       "provider": "ashby",
       "board": "lendable",
       "url": "https://jobs.ashbyhq.com/lendable",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Thought Machine",
       "provider": "ashby",
       "board": "thought-machine",
       "url": "https://jobs.ashbyhq.com/thought-machine",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Elliptic",
       "provider": "ashby",
       "board": "elliptic",
       "url": "https://jobs.ashbyhq.com/elliptic",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "LemFi",
       "provider": "ashby",
       "board": "lemfi",
       "url": "https://jobs.ashbyhq.com/lemfi",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Airwallex",
       "provider": "ashby",
       "board": "airwallex",
       "url": "https://jobs.ashbyhq.com/airwallex",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Ramp",
       "provider": "ashby",
       "board": "ramp",
       "url": "https://jobs.ashbyhq.com/ramp",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Bjak",
       "provider": "ashby",
       "board": "bjakcareer",
       "url": "https://jobs.ashbyhq.com/bjakcareer",
-      "sector": "financial-services"
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Octopus Legacy",
       "provider": "greenhouse",
       "board": "octopuslegacy",
       "url": "https://job-boards.greenhouse.io/octopuslegacy",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "tem",
       "provider": "ashby",
       "board": "tem",
       "url": "https://jobs.ashbyhq.com/tem",
-      "sector": "energy-utilities"
+      "sector": "energy-utilities",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Cambridge Consultants",
       "provider": "greenhouse",
       "board": "cambridgeconsultantslimited",
       "url": "https://job-boards.greenhouse.io/cambridgeconsultantslimited",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Ogilvy UK",
       "provider": "greenhouse",
       "board": "ogilvyuk",
       "url": "https://job-boards.greenhouse.io/ogilvyuk",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Hanover",
       "provider": "greenhouse",
       "board": "hanover",
       "url": "https://job-boards.greenhouse.io/hanover",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Nucleus Global",
       "provider": "greenhouse",
       "board": "nucleus",
       "url": "https://job-boards.greenhouse.io/nucleus",
-      "sector": "healthcare"
+      "sector": "healthcare",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "Resolve to Save Lives",
       "provider": "greenhouse",
       "board": "resolvetosavelives",
       "url": "https://job-boards.greenhouse.io/resolvetosavelives",
-      "sector": "charities"
+      "sector": "charities",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
     },
     {
       "name": "ClearView Healthcare Partners",
       "provider": "greenhouse",
       "board": "clearviewhealthcarepartners",
       "url": "https://job-boards.greenhouse.io/clearviewhealthcarepartners",
-      "sector": "professional-services"
+      "sector": "professional-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "configured_not_live_verified"
+    },
+    {
+      "name": "Wikimedia Foundation",
+      "provider": "greenhouse",
+      "board": "wikimedia",
+      "url": "https://job-boards.greenhouse.io/wikimedia",
+      "sector": "charities",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:57:22.121116+00:00",
+      "last_sample_raw_count": 16
+    },
+    {
+      "name": "Mozilla",
+      "provider": "greenhouse",
+      "board": "mozilla",
+      "url": "https://job-boards.greenhouse.io/mozilla",
+      "sector": "technology",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-11",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-11T19:57:24.741982+00:00",
+      "last_sample_raw_count": 114
     }
   ]
 }

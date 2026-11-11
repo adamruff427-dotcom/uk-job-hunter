@@ -212,7 +212,8 @@ def extract_jobposting(html_page: str, page_url: str, source: dict) -> list[dict
             jobs.append({"id": "website:" + identifier, "title": title.strip(), "company": company,
                          "location": location, "url": page_url, "date": iso_date(node.get("datePosted")),
                          "description": description, "workplace_type": workplace,
-                         "salary_min": salary_min, "salary_max": salary_max, "source": "website"})
+                         "salary_min": salary_min, "salary_max": salary_max, "source": "website",
+                         "expires_at": valid_to, "occupation": node.get("occupationalCategory")})
     return jobs
 
 

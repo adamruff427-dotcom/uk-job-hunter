@@ -1,38 +1,20 @@
-# Publish UK Job Hunter — GitHub steps
+# GitHub publication
 
-The GitHub connection available to this project can work with existing repositories but cannot create a new repository. Nothing in this release has been pushed to GitHub.
+Public code: https://github.com/adamruff427-dotcom/uk-job-hunter
 
-## 1. Create the PUBLIC repository
+Private minimal workspace: https://github.com/adamruff427-dotcom/uk-job-hunter-private
 
-In your GitHub account, create a **new empty public repository** named `uk-job-hunter`. Do **not** auto-add a README, `.gitignore`, or licence because this release already includes them.
+Both repositories were created from new sanitized histories. The private repository
+contains a launcher and documentation only; profiles, credentials and trackers stay
+local and ignored. The public engine is reused rather than forked privately.
 
-GitHub repository creation: https://github.com/new
+The local CLI token could create repositories and push code but could not upload
+GitHub Actions files without the `workflow` scope. The connected GitHub app was
+able to create the workflow using its separate permissions. Future workflow edits
+through the CLI may require `gh auth refresh -h github.com -s workflow`, or the
+connected app. This scope does not prevent ordinary code pushes.
 
-Extract the downloaded zip into a local directory, open Terminal there, and run:
-
-```bash
-python3 -m unittest discover -s tests
-python3 scripts/check_public_release.py
-git init -b main
-git add .
-git status --short
-git commit -m "feat: UK-wide search preview with optional Reed and Adzuna APIs"
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/uk-job-hunter.git
-git push -u origin main
-```
-
-Confirm the commit contains **only public code and example configuration** before pushing. Run `git status --short` and inspect files, even when the safety checker passes. GitHub may ask you to authenticate to push.
-
-## 2. Keep your own version PRIVATE
-
-Create a second, **private** repository called `uk-job-hunter-private` for any separately maintained personal configuration or private application workflows. Do not push an existing public repo with personal information in its history.
-
-The public build writes profiles and tracking data into `local_config/`, which is excluded from Git. Keeping private information on disk is the safest default; it does not have to be committed to your private repo at all. If you later add a private synchronisation workflow, keep `.env` and credentials excluded there too.
-
-## 3. Long-term maintenance
-
-Treat the public repository as the upstream source. Pull new public releases into your personal version and keep the private configuration isolated. Contributors should open PRs to the public repository, and CI must run tests and privacy checks before merging.
-
-## Before announcing a public launch
-
-The included test suite is mocked and deterministic. The production checklist must include live source checks, data-provider licensing, search quality, expiration reconciliation, data protection, and user support. The local preview should not be described as a hosted service or a complete nationwide UK jobs index.
+Before every publication, run Python and browser tests, inspect staged file names
+and contents and run the release hygiene checker. Never add local configuration,
+SQLite databases, tracker exports, personal reports or credentials. Preserve LICENSE
+and NOTICE.md. GitHub Actions tests use synthetic data, not live provider credentials.

@@ -1,0 +1,125 @@
+{
+  "scope": "One bounded refresh of ten sampled boards; SmartRecruiters detail cap two. Raw counts are not UK-active totals. HTTP reachability does not grant redistribution rights.",
+  "sources": [
+    {
+      "name": "Monzo",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/monzo",
+      "last_checked": "2026-11-11T19:56:54.933705+00:00",
+      "status": "ok",
+      "raw_count": 66,
+      "error": null,
+      "confirmed_uk": 48,
+      "non_uk": 11,
+      "unknown_eligibility": 7
+    },
+    {
+      "name": "Griffin",
+      "provider": "ashby",
+      "board_url": "https://jobs.ashbyhq.com/griffin",
+      "last_checked": "2026-11-11T19:56:55.719269+00:00",
+      "status": "ok",
+      "raw_count": 5,
+      "error": null,
+      "confirmed_uk": 5,
+      "non_uk": 0,
+      "unknown_eligibility": 0
+    },
+    {
+      "name": "Octopus Energy",
+      "provider": "lever",
+      "board_url": "https://jobs.lever.co/octoenergy",
+      "last_checked": "2026-11-11T19:56:58.449848+00:00",
+      "status": "ok",
+      "raw_count": 162,
+      "error": null,
+      "confirmed_uk": 73,
+      "non_uk": 86,
+      "unknown_eligibility": 3
+    },
+    {
+      "name": "Anduril Industries",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/andurilindustries",
+      "last_checked": "2026-11-11T19:57:15.105552+00:00",
+      "status": "error",
+      "raw_count": 0,
+      "error": "Source refresh failed (RuntimeError); check provider access, schema and limits",
+      "confirmed_uk": 0,
+      "non_uk": 0,
+      "unknown_eligibility": 0
+    },
+    {
+      "name": "Wise",
+      "provider": "smartrecruiters",
+      "board_url": "https://careers.smartrecruiters.com/Wise",
+      "last_checked": "2026-11-11T19:57:17.312246+00:00",
+      "status": "ok",
+      "raw_count": 2,
+      "error": null,
+      "confirmed_uk": 0,
+      "non_uk": 0,
+      "unknown_eligibility": 2
+    },
+    {
+      "name": "Turner & Townsend",
+      "provider": "smartrecruiters",
+      "board_url": "https://careers.smartrecruiters.com/TurnerTownsend",
+      "last_checked": "2026-11-11T19:57:21.330124+00:00",
+      "status": "ok",
+      "raw_count": 2,
+      "error": null,
+      "confirmed_uk": 2,
+      "non_uk": 0,
+      "unknown_eligibility": 0
+    },
+    {
+      "name": "Wikimedia Foundation",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/wikimedia",
+      "last_checked": "2026-11-11T19:57:22.121116+00:00",
+      "status": "ok",
+      "raw_count": 16,
+      "error": null,
+      "confirmed_uk": 0,
+      "non_uk": 0,
+      "unknown_eligibility": 16
+    },
+    {
+      "name": "Mozilla",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/mozilla",
+      "last_checked": "2026-11-11T19:57:24.741982+00:00",
+      "status": "ok",
+      "raw_count": 114,
+      "error": null,
+      "confirmed_uk": 14,
+      "non_uk": 85,
+      "unknown_eligibility": 15
+    },
+    {
+      "name": "Multiverse",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/multiverse",
+      "last_checked": "2026-11-11T19:57:25.435548+00:00",
+      "status": "error",
+      "raw_count": 0,
+      "error": "Source refresh failed (RuntimeError); check provider access, schema and limits",
+      "confirmed_uk": 0,
+      "non_uk": 0,
+      "unknown_eligibility": 0
+    },
+    {
+      "name": "Starling Bank",
+      "provider": "greenhouse",
+      "board_url": "https://job-boards.greenhouse.io/starlingbank",
+      "last_checked": "2026-11-11T19:57:26.040252+00:00",
+      "status": "error",
+      "raw_count": 0,
+      "error": "Source refresh failed (RuntimeError); check provider access, schema and limits",
+      "confirmed_uk": 0,
+      "non_uk": 0,
+      "unknown_eligibility": 0
+    }
+  ]
+}

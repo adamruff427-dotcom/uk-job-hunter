@@ -55,7 +55,8 @@ def smartrecruiters_job(company: str, board: str, obj: dict) -> dict | None:
     return {"id": f"smartrecruiters:{board}:{job_id}", "title": str(title),
             "company": company, "location": place, "url": link, "date": iso_date(obj.get("releasedDate")),
             "description": plain(desc), "workplace_type": kind,
-            "salary_min": None, "salary_max": None, "source": "smartrecruiters"}
+            "salary_min": None, "salary_max": None, "source": "smartrecruiters",
+            "country": loc.get('country'), "occupation": (obj.get('function') or {}).get('label')}
 
 
 def fetch_smartrecruiters(source: dict, *, reader: Callable[[str], Any] = read_public_json) -> list[dict]:
@@ -66,31 +67,31 @@ def fetch_smartrecruiters(source: dict, *, reader: Callable[[str], Any] = read_p
     if type(max_details) is not int or not 1 <= max_details <= 50:
         raise ValueError("SmartRecruiters max_details must be 1..50")
     base = f"https://api.smartrecruiters.com/v1/companies/{quote(board, safe='')}/postings"
-    listing = reader(base + "?limit=100&offset=0&destination=PUBLIC")
-    if not isinstance(listing, dict) or not isinstance(listing.get("content"), list):
-        raise RuntimeError("SmartRecruiters list response has unexpected structure")
+    pages = _bounded_int(source, 'max_pages', 2, 1, 6)
     jobs = []
-    for item in listing["content"]:
-        if not isinstance(item, dict):
-            continue
-        country = str((item.get("location") or {}).get("country") or "").casefold()
-        # Explicitly non-UK listings are not appropriate for a UK-focused search.
-        # A merely 'remote' US job does not imply UK eligibility.
-        if country and country not in {"gb", "uk", "united kingdom", "great britain"}:
-            continue
-        job_id = str(item.get("id") or "")
-        if not re.fullmatch(r"[A-Za-z0-9-]{1,90}", job_id):
-            continue
-        if len(jobs) >= max_details:
+    for page in range(pages):
+        listing = reader(base + f"?limit=100&offset={page * 100}&destination=PUBLIC")
+        if not isinstance(listing, dict) or not isinstance(listing.get("content"), list):
+            raise RuntimeError("SmartRecruiters list response has unexpected structure")
+        for item in listing['content']:
+            if not isinstance(item, dict):
+                raise RuntimeError('SmartRecruiters returned malformed list entry')
+            country = str((item.get('location') or {}).get('country') or '').casefold()
+            if country and country not in {'gb', 'uk', 'united kingdom', 'great britain'}:
+                continue
+            job_id = str(item.get('id') or '')
+            if not re.fullmatch(r'[A-Za-z0-9-]{1,90}', job_id):
+                raise RuntimeError('SmartRecruiters returned invalid posting ID')
+            detail = reader(base + '/' + quote(job_id, safe=''))
+            if not isinstance(detail, dict):
+                raise RuntimeError('SmartRecruiters returned invalid detail response')
+            result = smartrecruiters_job(source['name'], board, detail)
+            if result:
+                jobs.append(result)
+            if len(jobs) >= max_details:
+                return jobs
+        if len(listing['content']) < 100:
             break
-        try:
-            detail = reader(base + "/" + quote(job_id, safe=""))
-            if isinstance(detail, dict):
-                result = smartrecruiters_job(source["name"], board, detail)
-                if result:
-                    jobs.append(result)
-        except RuntimeError:
-            continue
     return jobs
 
 

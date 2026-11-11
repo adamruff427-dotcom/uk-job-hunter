@@ -1,4 +1,8 @@
-# UK-wide search architecture (v0.5 preview)
+# UK-wide search architecture
+
+Current v0.6 browsing uses the persistent local index and explicit refresh.
+See [INDEX.md](INDEX.md) for permission gates, storage, cache and expiry rules.
+The connector notes below describe the v0.5 foundations.
 
 ## What “Search everything” really does
 

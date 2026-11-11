@@ -1,4 +1,10 @@
-> For current step-by-step instructions for a new PUBLIC repository, see [GITHUB_SETUP.md](GITHUB_SETUP.md). Version 0.5 is not yet pushed.
+# Current publication
+
+Public code and the minimal private workspace have been published. See
+[GITHUB_SETUP.md](GITHUB_SETUP.md) for repository links and workflow permissions.
+No public web hosting or private-data synchronization is enabled.
+
+> For current step-by-step instructions for a new PUBLIC repository, see [GITHUB_SETUP.md](GITHUB_SETUP.md). The v0.5 baseline and subsequent index implementation are published.
 
 # Publish UK Job Hunter as a new public GitHub repository
 

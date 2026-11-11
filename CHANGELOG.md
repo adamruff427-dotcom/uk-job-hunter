@@ -1,3 +1,15 @@
+# v0.6.0 — persistent local index preview
+
+- Published public code and a separate minimal private-workspace launcher.
+- Added SQLite vacancy snapshots, per-source registry and refresh audit history,
+  conditional ATS requests, bounded retries/backoff and cautious stale handling.
+- Added explicit browser refresh, offline indexed browsing, provenance-preserving
+  dedupe and filters for published pay, occupation, source, eligibility and freshness.
+- Added two sampled employer feeds; recorded seven successes and three failures
+  from a bounded ten-board sample without claiming complete UK coverage.
+- Added mocked browser regression and axe accessibility checks; fixed text contrast.
+- Preserved source attribution and local profile/tracker boundaries.
+
 ## v0.5.0 — Wider UK search (11 November 2026)
 
 - Expanded publicly visible employer registry from 24 to 40 board starting points across several industries.

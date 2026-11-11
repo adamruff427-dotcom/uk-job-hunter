@@ -13,3 +13,12 @@ The web interface uses a Python HTTP server bound to `127.0.0.1` only. It is not
 The "Preview example jobs" control uses fictional local data. The browser displays employer-provided text as text, not executable HTML. JSON export contains your saved jobs and notes; handle exports as personal data.
 
 **A future hosted version would have a different data-processing model and needs a fresh privacy review, published notice, appropriate security controls and deletion/export policy before launch.**
+
+## Persistent local index (v0.6)
+
+Browsing uses the saved SQLite index and does not contact providers. Explicit
+refresh contacts enabled, permitted sources without sending candidate preferences.
+The index contains vacancy text, provenance and source audit records, never profiles
+or tracker notes. It is stored under ignored `local_config/`, or a private directory
+selected with `UK_HUNTER_DATA_DIR`. Delete the database to purge this cache/history.
+No private repository sync is implemented. See [storage and retention](docs/INDEX.md).
