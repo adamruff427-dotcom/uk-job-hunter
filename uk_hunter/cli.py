@@ -146,20 +146,30 @@ def main(argv: list[str] | None = None) -> int:
             if args.limit < 1 or args.limit > 500 or (args.jobage is not None and args.jobage < 1):
                 parser.error("limit must be 1..500 and jobage >=1")
             profile = load_config(args.profile)
-        jobs, errors = [], []
+        jobs, errors, source_health = [], [], []
+        from .source_health import diagnostic, feed_report
         from .index import permitted, VacancyIndex
         active = [source for source in sources if permitted(source)]
         if args.command == 'search' and args.indexed:
             snapshot = VacancyIndex(args.index).snapshot(sources)
             jobs, errors = snapshot['jobs'], snapshot['errors']
+            source_health = snapshot['source_health']
             active = []
         for source in active:
             if source.get("enabled", True) is False:
                 continue
             try:
-                jobs.extend(fetch_feed(source))
+                found = fetch_feed(source)
+                report = feed_report(found)
+                jobs.extend(found)
+                status = 'ok' if report['complete'] else 'partial'
+                source_health.append({'name': source.get('name'), 'provider': source.get('provider'), 'status': status, 'raw_count': len(found), **report})
+                if status == 'partial':
+                    errors.append(f"{source.get('name')}: incomplete details; metadata remains discoverable")
             except (RuntimeError, ValueError, KeyError) as exc:
-                errors.append(str(exc))
+                report = diagnostic(exc)
+                errors.append(f"{source.get('name')}: {report['error_category']}")
+                source_health.append({'name': source.get('name'), 'provider': source.get('provider'), 'status': 'error', **report})
         if args.command == "detail":
             # Only show detail from records supplied by configured official feeds.
             match = next((j for j in jobs if j["url"] == args.job_url), None)
@@ -185,7 +195,7 @@ def main(argv: list[str] | None = None) -> int:
             print(json.dumps({"results": [{"title": j["title"], "company": j["company"], "location": j["location"], "url": j["url"],
                     "date": j["date"], "source": j["source"], "fit": j["verdict"].lower(), "score": j["score"], "notes": j["reasons"]} for j in shown],
                               "counts": {k: sum(j["verdict"] == k for j in scored) for k in ("SHORTLIST", "REVIEW", "REJECT", "SKIP_OLD")},
-                              "errors": errors}, ensure_ascii=False, indent=2))
+                              "errors": errors, "source_health": source_health}, ensure_ascii=False, indent=2))
         elif args.format == "md":
             print(format_markdown(shown, errors, include_all=args.all))
         else:

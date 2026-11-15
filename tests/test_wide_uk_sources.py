@@ -106,7 +106,7 @@ class CoverageTests(unittest.TestCase):
                                       {'name':'Good','provider':'greenhouse'}],fetcher=fetch)
         self.assertEqual(len(result['source_health']),2)
         self.assertEqual(result['sources_reached'],1)
-        self.assertEqual(result['errors'][0],'Broken: HTTP 403')
+        self.assertEqual(result['errors'][0],'Broken: unknown_error')  # arbitrary exception text is private
         self.assertEqual([r['status'] for r in result['source_health']],['error','ok'])
 
     def test_direct_employer_beats_reed_copy(self):

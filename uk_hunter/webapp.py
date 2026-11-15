@@ -164,6 +164,7 @@ def parse_employer_url(url: str, name: str, job_path_prefix: str = "", sector: s
         "jobs.lever.co": "lever",
         "jobs.ashbyhq.com": "ashby",
         "careers.smartrecruiters.com": "smartrecruiters",
+        "apply.workable.com": "workable",
     }
     provider = hosts.get((parts.hostname or "").lower())
     if not provider:
@@ -177,6 +178,8 @@ def parse_employer_url(url: str, name: str, job_path_prefix: str = "", sector: s
     if any(s in {".", ".."} for s in segments):
         raise ValueError("Unsafe careers path")
     board = segments[0] if segments else ""
+    if provider == 'workable' and (len(segments) != 1 or board in {'j', 'api'}):
+        raise ValueError('Use a Workable employer board URL')
     if not re.fullmatch(r"[A-Za-z0-9_-]{1,80}", board):
         raise ValueError("Could not identify a safe board slug")
     return {
@@ -236,14 +239,22 @@ def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=Fa
                     name = str(src.get("name") or "Unknown source")[:100]
                     provider = str(src.get("provider") or "unknown")[:40]
                     try:
-                        found = [item for item in future.result() if isinstance(item, dict)]
+                        from .source_health import feed_report
+                        result = future.result()
+                        report = feed_report(result)
+                        found = [item for item in result if isinstance(item, dict)]
                         jobs.extend({**item, "_source_sector": src.get("sector")} for item in found)
-                        source_health.append({"name": name, "provider": provider, "status": "ok", "raw_count": len(found)})
+                        status = 'ok' if report['complete'] else 'partial'
+                        source_health.append({"name": name, "provider": provider, "status": status, "raw_count": len(found), **report})
+                        if status == 'partial':
+                            failures.append(f'{name}: incomplete details; metadata remains discoverable')
                         reached += 1
                     except Exception as exc:  # provider errors never count as zero jobs
-                        error = str(exc)[:200]
+                        from .source_health import diagnostic
+                        report = diagnostic(exc)
+                        error = report['error_category']
                         failures.append(f"{name}: {error}")
-                        source_health.append({"name": name, "provider": provider, "status": "error", "error": error})
+                        source_health.append({"name": name, "provider": provider, "status": "error", "error": error, **report})
         source_health.sort(key=lambda row: (row["status"] != "error", row["name"].casefold()))
     from .dedupe import unique_jobs
     output = []
@@ -275,6 +286,7 @@ def scan_jobs(profile: dict, sources: list[dict], fetcher=fetch_feed, *, demo=Fa
         "errors": failures,
         "source_count": len(active_sources),
         "sources_reached": reached,
+        "sources_partial": sum(row['status'] == 'partial' for row in source_health),
         "sources_disabled": len(sources) - len(active_sources),
         "source_health": source_health,
         "configured_source_count": len(sources),

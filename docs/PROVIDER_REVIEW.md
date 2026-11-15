@@ -28,3 +28,33 @@ and Mozilla. The configured registry's other unsampled entries remain explicitly
 unverified. The JSON evidence records request times and returned/eligibility counts,
 not advert text. Its normalized counts are neither national totals nor proof a
 listing remains open now. Generic remote and ambiguous locations stay unknown.
+
+
+## Source repair review — 15 November 2026
+
+Multiverse's official careers HTML calls Ashby's public posting API with board
+`multiverse`. The existing Ashby adapter works for that board. Its historical
+Greenhouse target returns 404 today; the original generic error does not prove
+what happened on 11 November.
+
+Workable documents an unauthenticated public jobs endpoint in
+[its troubleshooting guide](https://help.workable.com/hc/en-us/articles/4903195036183-Troubleshooting-API-issues).
+For `starling-bank`, the documented legacy URL redirects to
+`https://apply.workable.com/api/v1/widget/accounts/starling-bank?details=true`.
+A direct GET to the canonical route succeeds with redirects disabled. The adapter
+uses this narrow public route, not credentialed SPI APIs or application endpoints.
+The careers board is https://apply.workable.com/starling-bank/ and the employer
+careers page is https://www.starlingbank.com/careers/. Repeated shortcodes denote
+one vacancy advertised in multiple locations, not additional vacancies.
+This documents public GET access for local discovery, not employer consent or
+commercial redistribution clearance; commercial reuse remains review-required.
+
+Anduril's Greenhouse board is correct. The existing full-content GET reproduces
+`response_too_large`, while metadata listing and an individual detail GET work.
+The new bounded route uses the documented Greenhouse list and detail GET APIs.
+The smaller route does not establish complete detail coverage. The historical
+error alone does not prove the same cause occurred on 11 November.
+
+See [new bounded evidence](live-source-check-2026-11-15.json). No Reed/Adzuna
+credentials, permissions or enabled states changed. No new website crawling,
+authenticated access, automated applications or hosted publication is enabled.

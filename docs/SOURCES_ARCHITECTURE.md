@@ -8,7 +8,7 @@ Search is **read only**. It does not send user CVs, salary preferences or applic
 
 ## Three acquisition routes
 
-1. **Published employer ATS APIs**: Greenhouse, Lever, Ashby, SmartRecruiters. Read only public listings on a configured board. SmartRecruiters retrieves limited job details using its public Posting API; first 100 board entries are considered, and a configured maximum of 25 UK details are fetched by default. It is not a comprehensive full-board mirror.
+1. **Published employer ATS APIs**: Greenhouse, Lever, Ashby, SmartRecruiters, Workable. Read only public listings on a configured board. SmartRecruiters retrieves limited job details using its public Posting API; first 100 board entries are considered, and a configured maximum of 25 UK details are fetched by default. It is not a comprehensive full-board mirror.
 2. **Configured company careers website → our API**: A page may embed schema.org `JobPosting` JSON-LD. The `website` connector fetches a configured public careers landing page, discovers up to 10 same-host detail links under explicit permitted path prefixes, parses structured job metadata, and emits standard records. It obeys `robots.txt`, limits requests, restricts HTTPS, checks public DNS addresses and refuses redirects. It fails visibly when there are no structured postings, a site is JavaScript-rendered, or permission is denied. This does not bypass CAPTCHA, login or site restrictions. There remains a DNS rebinding TOCTOU risk in the stdlib network stack; do **not** expose the user-configurable website connector to a multi-tenant public server without network egress isolation, pinned DNS connections and an approved source registry.
 3. **Licensed broader job APIs**: Optional Reed and Adzuna UK connectors using `ADZUNA_APP_ID` and `ADZUNA_APP_KEY` environment variables. Searches bounded keyword or blank-query broad result pages. It is disabled without credentials; commercial operation requires a separate licence/permission review. Attribution must be added to any public presentation of Adzuna content. Salary estimates are not promoted to verified annual base pay; the candidate should confirm details at the original employer website.
 
@@ -78,3 +78,19 @@ Reed Jobseeker API uses an `REED_API_KEY` provided via environment, and authenti
 Adzuna and Reed support `queries:[""]` for broad searches, with bounded `max_pages` and `results_per_page` to manage rate limits. Both remain off until credentials are supplied and use is permitted.
 
 The browser now shows a per-source reachability and raw-record count report. Individual source errors remain visible. Search Everything continues to query every enabled source and exposes more than 250 results using **Load more jobs**, without applying profile restrictions. See [Wide UK search](WIDE_SEARCH.md).
+
+
+## Focused source repairs
+
+Workable uses the fixed canonical public widget GET host/path and validated board
+identifier, normalized into the same vacancy records. The browser recognizes
+`https://apply.workable.com/<board>/` as an employer board, and rejects job or API
+paths as board URLs. Workable remains a direct employer source for deduplication.
+Original links, unknown pay/workplace data and multiple-country eligibility remain
+visible. One shortcode is one vacancy even when the widget repeats location rows.
+
+Large Greenhouse boards can opt into `fetch_strategy=uk_metadata_details`;
+this is configured only for Anduril. Metadata-only and stale-detail records remain
+discoverable with explicit review status. The list is not silently truncated to
+the detail cap. See [budgets and health semantics](INDEX.md#bounded-large-board-discovery-and-source-diagnostics).
+All other Greenhouse boards retain their single-response full-content route.

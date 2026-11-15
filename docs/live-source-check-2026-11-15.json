@@ -1,0 +1,56 @@
+{
+  "checked_on": "2026-11-15T09:41:19.786585+00:00",
+  "scope": "Bounded read-only sample of three repaired sources. Anduril capped at two details and 30 seconds; metadata remains discoverable. Workable rows are merged by shortcode before indexing. list_count is provider rows; raw_count is normalized vacancies, including non-UK vacancies where returned. Reachability does not grant commercial redistribution rights.",
+  "base_commit": "1d745bf6d59fa437f4ab8a51dd804e1276c705c5",
+  "sources": [
+    {
+      "name": "Anduril Industries",
+      "provider": "greenhouse",
+      "status": "partial",
+      "last_checked": "2026-11-15T09:41:04.339015+00:00",
+      "last_success": null,
+      "raw_count": 43,
+      "list_count": 2598,
+      "details_attempted": 2,
+      "details_succeeded": 2,
+      "details_pending": 41,
+      "complete": false,
+      "live_count": 43,
+      "uk_eligible_seen": 22,
+      "unknown_eligibility_seen": 21,
+      "error": "Incomplete details; metadata remains discoverable",
+      "error_category": "partial_details",
+      "fetch_scope": "UK-plausible metadata / at most 2 details; 30s budget"
+    },
+    {
+      "name": "Multiverse",
+      "provider": "ashby",
+      "status": "ok",
+      "last_checked": "2026-11-15T09:41:10.757216+00:00",
+      "last_success": "2026-11-15T09:41:10.757216+00:00",
+      "raw_count": 25,
+      "list_count": 25,
+      "complete": true,
+      "live_count": 25,
+      "uk_eligible_seen": 25,
+      "unknown_eligibility_seen": 0,
+      "error": null,
+      "fetch_scope": "single employer board response"
+    },
+    {
+      "name": "Starling Bank",
+      "provider": "workable",
+      "status": "ok",
+      "last_checked": "2026-11-15T09:41:19.778008+00:00",
+      "last_success": "2026-11-15T09:41:19.778008+00:00",
+      "raw_count": 49,
+      "list_count": 93,
+      "complete": true,
+      "live_count": 49,
+      "uk_eligible_seen": 46,
+      "unknown_eligibility_seen": 0,
+      "error": null,
+      "fetch_scope": "single employer board response"
+    }
+  ]
+}
