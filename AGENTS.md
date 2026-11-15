@@ -1,4 +1,4 @@
-> Current version v0.6; 42 configured employer feeds, seven successfully sampled, persistent local index. Public GitHub code is published. See GITHUB_SETUP.md and docs/WIDE_SEARCH.md.
+> Current version v0.6; 44 configured employer feeds; dated source checks include partial-detail coverage, persistent local index. Public GitHub code is published. See GITHUB_SETUP.md and docs/WIDE_SEARCH.md.
 
 # Agent instructions — public UK Job Hunter
 

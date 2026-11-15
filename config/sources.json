@@ -60,9 +60,14 @@
       "permission_status": "documented_public_get_local_only",
       "commercial_reuse": "review_required",
       "permission_reviewed_on": "2026-11-11",
-      "verification_status": "sample_failed",
-      "last_sample_checked": "2026-11-11T19:57:15.105552+00:00",
-      "last_sample_raw_count": 0
+      "verification_status": "sample_partial",
+      "last_sample_checked": "2026-11-15T09:41:04.339015+00:00",
+      "last_sample_raw_count": 43,
+      "fetch_strategy": "uk_metadata_details",
+      "max_details": 25,
+      "max_seconds": 60,
+      "max_total_bytes": 20000000,
+      "sample_detail_cap": 2
     },
     {
       "name": "Wise",
@@ -607,6 +612,40 @@
       "verification_status": "sample_returned_records",
       "last_sample_checked": "2026-11-11T19:57:24.741982+00:00",
       "last_sample_raw_count": 114
+    },
+    {
+      "name": "Multiverse",
+      "provider": "ashby",
+      "board": "multiverse",
+      "url": "https://jobs.ashbyhq.com/multiverse",
+      "sector": "education",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-15",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-15T09:41:10.757216+00:00",
+      "official_careers_url": "https://www.multiverse.io/careers/were-hiring",
+      "last_sample_raw_count": 25
+    },
+    {
+      "name": "Starling Bank",
+      "provider": "workable",
+      "board": "starling-bank",
+      "url": "https://apply.workable.com/starling-bank/",
+      "sector": "financial-services",
+      "country_coverage": [
+        "UK and international; inspect each posting"
+      ],
+      "permission_status": "documented_public_get_local_only",
+      "commercial_reuse": "review_required",
+      "permission_reviewed_on": "2026-11-15",
+      "verification_status": "sample_returned_records",
+      "last_sample_checked": "2026-11-15T09:41:19.778008+00:00",
+      "official_careers_url": "https://www.starlingbank.com/careers/",
+      "last_sample_raw_count": 49
     }
   ]
 }

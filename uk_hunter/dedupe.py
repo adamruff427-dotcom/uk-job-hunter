@@ -33,7 +33,7 @@ def unique_jobs(jobs: list[dict]) -> list[dict]:
     exactly one matching direct posting. Distinct direct requisitions and ambiguous
     matches stay separate. Canonical URLs can identify a stronger exact match.
     """
-    rank = {'greenhouse': 0, 'ashby': 0, 'lever': 0, 'smartrecruiters': 0,
+    rank = {'greenhouse': 0, 'ashby': 0, 'lever': 0, 'smartrecruiters': 0, 'workable': 0,
             'website': 1, 'adzuna': 2, 'reed': 2}
     direct_candidates = defaultdict(set)
     for job in jobs:

@@ -139,6 +139,10 @@ def evaluate(job: dict, profile: dict, days: int | None = None, today: date | No
     # Transparent triage score, not a probability of getting the job.
     score = role_score + (25 if location_gate == "PASS" else 7) + (15 if salary_gate == "PASS" else 0)
     verdict = "SHORTLIST" if exact and location_gate == "PASS" and salary_gate == "PASS" else "REVIEW"
+    if (job.get('detail_status') in {'metadata_only', 'unavailable', 'stale'} or
+            job.get('scan_status') in {'source_partial', 'source_unavailable', 'unconfirmed'}):
+        verdict = 'REVIEW'
+        reasons.append('Vacancy availability or essential requirements not freshly checked; review missing or stale details')
     if not exact:
         reasons.append("Verify transferable experience against all essential requirements")
     if not job.get("date"):

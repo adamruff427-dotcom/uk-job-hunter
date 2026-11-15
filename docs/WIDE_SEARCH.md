@@ -14,7 +14,7 @@ It does not claim access to every advertised UK job. There is no universal publi
 
 | Source | Scope | Credentials | Default |
 |---|---|---|---|
-| Greenhouse, Ashby, Lever | Curated employers | None | Enabled |
+| Greenhouse, Ashby, Lever, Workable | Curated employers | None | Enabled |
 | SmartRecruiters public postings | Curated employers | None | Enabled |
 | Structured company careers pages | User-provided careers websites with JobPosting JSON-LD, robots respected | None | Opt-in |
 | Reed Jobseeker API | Broad UK search and job information | `REED_API_KEY` | Disabled until configured |

@@ -14,6 +14,7 @@ from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlsplit
 from urllib.request import Request, urlopen
+from .source_health import SourceError, FeedResult
 
 
 class HTMLText(HTMLParser):
@@ -159,6 +160,9 @@ def endpoint(provider: str, board: str) -> str:
 
 def fetch_feed(company_source: dict, timeout: int = 15) -> list[dict]:
     provider = company_source["provider"]
+    if provider == "workable":
+        from .workable import fetch_workable
+        return fetch_workable(company_source, timeout=timeout)
     if provider == "smartrecruiters":
         from .extra_providers import fetch_smartrecruiters
         return fetch_smartrecruiters(company_source)
@@ -178,12 +182,46 @@ def fetch_snapshot(company_source: dict, validators=None, timeout=15):
     """Conditional GET for single-response ATS feeds; 304 preserves the snapshot."""
     provider = company_source["provider"]
     board = company_source["board"]
+    if provider == 'greenhouse' and company_source.get('fetch_strategy') == 'uk_metadata_details':
+        from .greenhouse_details import fetch_greenhouse_details
+        # Multi-request snapshots deliberately use no validators. A list 304
+        # cannot reconfirm detail content or repair a previously partial scan.
+        return fetch_greenhouse_details(company_source, timeout=timeout), {}, False
+    obj, new_validators, unchanged, size = read_ats_json(endpoint(provider, board), validators, timeout=timeout)
+    if unchanged:
+        return [], new_validators, True
+    items = obj if provider == "lever" else obj.get("jobs") if isinstance(obj, dict) else None
+    if not isinstance(items, list):
+        raise SourceError('schema_error')
+    results = []
+    for item in items:
+        if not isinstance(item, dict):
+            raise SourceError('schema_error')
+        record = normalized(company_source["name"], provider, board, item)
+        if record:
+            if provider == 'ashby':
+                address = (item.get('address') or {}).get('postalAddress') or {}
+                countries = [str(address.get('addressCountry') or '')]
+                countries += [str(((x.get('address') or {}).get('postalAddress') or x.get('address') or {}).get('addressCountry') or '')
+                              for x in item.get('secondaryLocations', []) if isinstance(x, dict)]
+                record['country'] = 'GB' if any(c.casefold() in {'gb', 'gbr', 'uk', 'united kingdom'} for c in countries) else next((c for c in countries if c), None)
+                record['occupation'] = item.get('department') or None
+                record['source_metadata'] = {'department': item.get('department'), 'employment_type': item.get('employmentType')}
+            elif provider == 'lever':
+                record['country'] = item.get('country') or None
+                record['occupation'] = (item.get('categories') or {}).get('team') or None
+            results.append(record)
+    return FeedResult(results, list_count=len(items), response_bytes=size), new_validators, False
+
+
+def read_ats_json(url, validators=None, *, timeout=15, max_bytes=10_000_000):
+    """Internal fixed-provider GET transport; never pass advert-supplied URLs."""
     headers = {"Accept": "application/json", "User-Agent": "UKJobHunterOpenSource/0.6"}
     for key, header in (("etag", "If-None-Match"), ("last_modified", "If-Modified-Since")):
         value = (validators or {}).get(key)
         if isinstance(value, str) and len(value) < 500 and not any(c in value for c in "\r\n"):
             headers[header] = value
-    request = Request(endpoint(provider, board), headers=headers, method="GET")
+    request = Request(url, headers=headers, method="GET")
     from urllib.request import build_opener, HTTPRedirectHandler
     class NoRedirect(HTTPRedirectHandler):
         def redirect_request(self, req, fp, code, msg, headers, newurl):
@@ -192,45 +230,39 @@ def fetch_snapshot(company_source: dict, validators=None, timeout=15):
     try:
         with opener.open(request, timeout=timeout) as response:
             if response.geturl() != request.full_url:
-                raise ValueError("Unexpected redirect")
-            raw = response.read(10_000_001)
+                raise SourceError('redirect_rejected')
+            raw = response.read(max_bytes + 1)
             response_headers = getattr(response, 'headers', {})
             new_validators = {k: response_headers[h] for k, h in
                               (("etag", "ETag"), ("last_modified", "Last-Modified"))
                               if isinstance(response_headers.get(h), str)}
     except HTTPError as exc:
         if exc.code == 304 and validators:
-            return [], validators, True
-        raise RuntimeError("ATS request failed (HTTP " + str(exc.code) + ")") from None
-    except (URLError, TimeoutError):
-        raise RuntimeError("ATS request failed; check access and network") from None
-    if len(raw) > 10_000_000:
-        raise RuntimeError("ATS feed exceeds 10 MB safety limit")
+            return None, validators, True, 0
+        category = ('http_not_found' if exc.code in {404, 410} else
+                    'access_denied' if exc.code in {401, 403} else
+                    'rate_limited' if exc.code == 429 else
+                    'redirect_rejected' if 300 <= exc.code < 400 else
+                    'provider_error' if 500 <= exc.code < 600 else 'unknown_error')
+        retry_after = None
+        value = (exc.headers or {}).get('Retry-After', '')
+        if str(value).isdigit():
+            retry_after = min(86400, int(value))
+        elif value:
+            from email.utils import parsedate_to_datetime
+            try:
+                retry_after = max(0, (parsedate_to_datetime(value) - datetime.now(timezone.utc)).total_seconds())
+            except (ValueError, TypeError, OverflowError):
+                pass
+        raise SourceError(category, http_status=exc.code, retry_after=retry_after) from None
+    except TimeoutError:
+        raise SourceError('network_timeout') from None
+    except URLError as exc:
+        raise SourceError('network_timeout' if isinstance(exc.reason, TimeoutError) else 'network_error') from None
+    if len(raw) > max_bytes:
+        raise SourceError('response_too_large')
     try:
         obj = json.loads(raw)
     except (ValueError, UnicodeDecodeError):
-        raise RuntimeError("ATS returned invalid JSON") from None
-    items = obj if provider == "lever" else obj.get("jobs") if isinstance(obj, dict) else None
-    if not isinstance(items, list):
-        raise RuntimeError("ATS returned unexpected feed schema")
-    results = []
-    for item in items:
-        if not isinstance(item, dict):
-            raise RuntimeError("ATS returned malformed posting")
-        record = normalized(company_source["name"], provider, board, item)
-        if record:
-            if provider == 'ashby':
-                address = (item.get('address') or {}).get('postalAddress') or {}
-                countries = [str(address.get('addressCountry') or '')]
-                countries += [str(((x.get('address') or {}).get('postalAddress') or x.get('address') or {}).get('addressCountry') or '')
-                              for x in item.get('secondaryLocations', []) if isinstance(x, dict)]
-                # Any explicit UK location is sufficient; multiple overseas
-                # countries must not erase a UK secondary location.
-                record['country'] = 'GB' if any(c.casefold() in {'gb', 'gbr', 'uk', 'united kingdom'} for c in countries) else next((c for c in countries if c), None)
-                record['occupation'] = item.get('department') or None
-                record['source_metadata'] = {'department': item.get('department'), 'employment_type': item.get('employmentType')}
-            elif provider == 'lever':
-                record['country'] = item.get('country') or None
-                record['occupation'] = (item.get('categories') or {}).get('team') or None
-            results.append(record)
-    return results, new_validators, False
+        raise SourceError('invalid_json') from None
+    return obj, new_validators, False, len(raw)

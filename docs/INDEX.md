@@ -94,5 +94,44 @@ review. `review_required`, `blocked` and `denied` prevent refresh. A reachable A
 and permissive robots.txt do not by themselves grant republication rights.
 
 See [live evidence](live-source-check-2026-11-11.json) and [provider review](PROVIDER_REVIEW.md).
-There are 42 configured employer boards, only seven successfully sampled during
-this implementation. None of these figures establishes nationwide completeness.
+There are 44 configured employer boards. The historical ten-source sample and
+[three-source repair sample](live-source-check-2026-11-15.json) cover different
+scopes and include partial-detail discovery. Neither establishes nationwide completeness.
+
+
+## Bounded large-board discovery and source diagnostics
+
+Schema v2 adds allowlisted diagnostics to existing source/run rows without
+removing vacancy records. `last_success` means the last complete refresh of the
+configured scope; partial refreshes update `last_checked` but leave that timestamp
+unchanged. Failed or partial refreshes never mark absent records unconfirmed.
+Fresh metadata is distinct from freshly checked description content. Previously
+saved descriptions can remain visible with `detail_status=stale` and their last
+successful detail timestamp. Missing/stale details or uncertain availability force
+human review instead of a shortlist verdict. The existing 30-day retention still applies.
+
+Health distinguishes `ok` (including valid empty), `partial`, `error`,
+`not_checked`, `disabled` and `permission_required`. Reports separate global list
+rows, normalized vacancies, current seen records, explicit UK/unknown eligibility,
+detail attempts/successes/pending work and cached/stale records. Errors use safe
+categories and numeric HTTP status, never upstream exception text or credentials.
+Only known transient failures are retried; long Retry-After instructions defer
+refresh rather than retrying early. Unknown failures remain visible without being
+assumed transient. Licensed-source and website permission gates are unchanged.
+
+Anduril's `fetch_strategy=uk_metadata_details` requests the metadata list without
+`content=true`, then validated numeric IDs on the fixed Greenhouse detail route.
+Defaults: 25 details, 60 seconds elapsed budget between requests, 20 MB conservative
+byte budget, 10 MB maximum list response and 1 MB per detail (plus bounded overflow
+sentinels). Each request timeout is capped to remaining time; socket timeouts are
+not an absolute wall-clock guarantee. Detail requests are paced 0.5 seconds apart.
+Every UK-plausible metadata record remains discoverable even when a cap is reached;
+clearly overseas-only locations are excluded and ambiguous remote locations stay
+unknown. Explicit UK records are prioritized for details. Details beyond the cap
+may remain metadata-only across refreshes; no full-detail coverage is claimed.
+Multi-request scans are unconditional: a cached list 304 cannot stand in for
+checking missing or stale details. Other Greenhouse boards retain conditional GET.
+
+`response_bytes` counts successfully returned bodies; `budget_bytes_used` also
+reserves the allowance for failed detail reads whose actual size is unknown.
+Strategy and budget options are included in source snapshot identity.

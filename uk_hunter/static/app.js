@@ -46,6 +46,7 @@ function jobCard(job) {
   appendMeta(meta, salary(job));
   appendMeta(meta, job.uk_eligibility === 'confirmed_uk' ? 'UK eligibility explicit' : 'UK eligibility needs checking');
   if (job.last_seen) appendMeta(meta, `Last seen ${new Date(job.last_seen).toLocaleDateString('en-GB')} · ${job.scan_status}`);
+  if (job.detail_status && job.detail_status !== 'complete') appendMeta(meta, `Details: ${job.detail_status.replace('_',' ')}${job.detail_last_success ? ' · last checked ' + new Date(job.detail_last_success).toLocaleDateString('en-GB') : ''}`);
   if (job.industry) {
     const sector = (state.scan?.industries || []).find(item => item.id === job.industry);
     appendMeta(meta, sector?.label || 'Unclassified');
@@ -176,8 +177,11 @@ function showScan(scan) {
   if (health) {
     clear(health);
     for (const row of scan.source_health || []) {
+      const reached = ['ok','partial'].includes(row.status);
+      const counts = reached ? `; ${row.raw_count} normalized; ${row.live_count ?? row.raw_count} seen; ${row.uk_eligible_seen ?? 'unknown'} explicit UK; ${row.unknown_eligibility_seen ?? 'unknown'} eligibility unknown` : '';
+      const details = row.details_attempted !== undefined ? `; details ${row.details_succeeded}/${row.details_attempted} succeeded; ${row.details_pending} pending${row.detail_error_category ? ' — ' + row.detail_error_category : ''}${row.detail_http_status ? ' (HTTP ' + row.detail_http_status + ')' : ''}` : '';
       health.append(el('li', row.status === 'ok' ? 'ok' : 'error',
-        `${row.name} (${row.provider}): ${row.status === 'ok' ? row.raw_count + ' returned; ' + (row.live_count ?? row.raw_count) + ' seen in last successful snapshot; ' + (row.uk_eligible_seen ?? 0) + ' with explicit UK eligibility' : row.status + (row.error ? ' — ' + row.error : '')}${row.last_success ? '; last success ' + row.last_success : ''}; rights: ${row.permission_status || 'review required'}; ${row.fetch_scope || 'sample scan'}`));
+        `${row.name} (${row.provider}): ${row.status}${row.error_category ? ' — ' + row.error_category : ''}${row.http_status ? ' (HTTP ' + row.http_status + ')' : ''}${row.error ? ' — ' + row.error : ''}${row.list_count !== undefined ? '; ' + row.list_count + ' board records received' : ''}${counts}${details}; ${row.stale_count ?? 0} cached or stale${row.last_checked ? '; last check ' + row.last_checked : ''}${row.last_success ? '; last complete success ' + row.last_success : ''}; rights: ${row.permission_status || 'review required'}; ${row.fetch_scope || 'sample scan'}`));
     }
     const detail = $('coverageDetails'); if (detail) detail.hidden = !health.children.length;
   }

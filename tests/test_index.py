@@ -52,7 +52,7 @@ class IndexTests(unittest.TestCase):
         self.assertEqual(snapshot['sources_reached'], 0)
         with self.index.connect() as db:
             run = db.execute('SELECT * FROM runs ORDER BY id DESC').fetchone()
-            self.assertEqual(run['attempts'], 2)
+            self.assertEqual(run['attempts'], 1)  # unknown failures are not assumed transient
         self.assertNotIn(b'DO_NOT_STORE_THIS', self.path.read_bytes())
 
     def test_missing_is_unconfirmed_not_closed_and_cautious_retention(self):

@@ -1,6 +1,26 @@
 const { test, expect } = require('@playwright/test');
 const AxeBuilder = require('@axe-core/playwright').default;
 
+test('partial source coverage is explicit in the browser', async ({page, request}) => {
+  const response = await request.get('/api/jobs');
+  const report = await response.json();
+  report.source_health = [{name:'Example Defence',provider:'greenhouse',status:'partial',
+    raw_count:3,live_count:3,uk_eligible_seen:2,unknown_eligibility_seen:1,list_count:10,
+    details_attempted:1,details_succeeded:1,details_pending:2,stale_count:1,
+    error_category:'partial_details',last_checked:'2026-11-15T00:00:00Z',
+    last_success:'2026-11-14T00:00:00Z',fetch_scope:'UK-plausible metadata / bounded details'}];
+  await page.route('**/api/jobs', route => route.fulfill({json:report}));
+  await page.goto('/');
+  await page.getByRole('button',{name:/Search everything/}).click();
+  const health = page.locator('#coverageHealth');
+  await expect(health).toContainText('partial');
+  await expect(health).toContainText('10 board records received');
+  await expect(health).toContainText('2 explicit UK');
+  await expect(health).toContainText('details 1/1 succeeded; 2 pending');
+  await expect(health).toContainText('1 cached or stale');
+  await expect(health).toContainText('last complete success 2026-11-14');
+});
+
 test('indexed discovery, private matching, filters, pagination, errors and export', async ({page, request}) => {
   const errors=[]; page.on('pageerror', error=>errors.push(error.message));
   await page.goto('/');
