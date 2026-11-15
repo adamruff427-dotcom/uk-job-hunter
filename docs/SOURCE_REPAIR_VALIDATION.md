@@ -31,7 +31,8 @@ Validation branch: `fix/reliable-employer-sources`. No deployment performed.
   Playwright browser binary is unavailable. A separate attempt with installed
   Chromium also fails before tests execute: this environment denies Chromium's
   process-singleton socket operation. Browser interaction, accessibility and
-  layout checks therefore remain unverified. No sandbox/permission controls were changed.
+  layout checks could not be verified locally; GitHub CI supplies separate browser
+  validation. No sandbox/permission controls were changed.
 
 The new tests cover public GET errors/redirects/byte limits, Anduril detail/time/
 byte caps, missing-detail discovery, unconditional multi-request snapshots,

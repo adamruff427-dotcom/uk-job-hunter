@@ -11,6 +11,7 @@ test('partial source coverage is explicit in the browser', async ({page, request
     last_success:'2026-11-14T00:00:00Z',fetch_scope:'UK-plausible metadata / bounded details'}];
   await page.route('**/api/jobs', route => route.fulfill({json:report}));
   await page.goto('/');
+  await page.getByRole('button',{name:/Search everything/}).click();
   const health = page.locator('#coverageHealth');
   await expect(health).toContainText('partial');
   await expect(health).toContainText('10 board records received');
